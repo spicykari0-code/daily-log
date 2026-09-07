@@ -37,6 +37,20 @@ p{margin:0;}
 }
 .hero p.sub{color:var(--green-dim);font-size:1.1rem;margin-top:10px;line-height:1.5;max-width:56ch;}
 
+.date-field{display:flex;align-items:center;gap:10px;margin-top:16px;flex-wrap:wrap;}
+.date-field .date-label{font-size:0.95rem;color:var(--green-dim);letter-spacing:0.03em;text-transform:uppercase;}
+.date-display{
+  font-family:var(--font-body);font-size:1.15rem;color:var(--green);letter-spacing:0.02em;
+  background:transparent;border:1px solid var(--green-dim);padding:6px 12px;cursor:pointer;
+}
+.date-display:hover, .date-display:focus{outline:none;border-color:var(--green);}
+.date-display .today-flag{color:var(--green-dim);font-size:0.85rem;margin-left:6px;}
+.date-input{
+  font-family:var(--font-body);font-size:1.1rem;color:var(--green);color-scheme:dark;
+  background:var(--bg);border:1px solid var(--green);padding:5px 10px;
+}
+.date-input:focus{outline:none;}
+
 .group-label{
   margin:30px 0 10px;padding-bottom:6px;border-bottom:1px dashed var(--green-faint);
 }
@@ -198,6 +212,11 @@ p{margin:0;}
     <p class="kicker">&gt; layout test // crt skin</p>
     <h1>DAILY LOG</h1>
     <p class="sub">Full field set, compact row format, in the chosen colors. Click around.</p>
+    <div class="date-field">
+      <span class="date-label">&gt; LOG DATE:</span>
+      <span class="date-display" id="dateDisplay" tabindex="0" role="button"></span>
+      <input type="date" id="dateInput" class="date-input" style="display:none">
+    </div>
   </div>
 
   <div class="top-actions">
@@ -237,7 +256,7 @@ p{margin:0;}
   </div>
 
   <div class="save-bar">
-    <button class="bracket-btn save-btn" id="saveBtn" type="button">[ SAVE TODAY'S ENTRY ]</button>
+    <button class="bracket-btn save-btn" id="saveBtn" type="button">[ SAVE ENTRY ]</button>
     <p class="save-status" id="saveStatus"></p>
   </div>
 
@@ -249,12 +268,24 @@ p{margin:0;}
 (function(){
   "use strict";
 
+  // ---------- Active date (today by default, editable for backfill) ----------
+  var pad = function(n){ return String(n).padStart(2,"0"); };
+  var realToday = new Date();
+  var realTodayStr = realToday.getFullYear()+"-"+pad(realToday.getMonth()+1)+"-"+pad(realToday.getDate());
+  function getDateFromUrl(){
+    try {
+      var m = location.search.match(/[?&]date=(\d{4}-\d{2}-\d{2})(?:&|$)/);
+      if (m) return m[1];
+    } catch(e) {}
+    return null;
+  }
+  var activeDateStr = getDateFromUrl() || realTodayStr;
+
   // ---------- Boot sequence ----------
   (function boot(){
     var textEl = document.getElementById("bootText");
     var content = document.getElementById("mainContent");
-    var d = new Date();
-    var pad = function(n){ return String(n).padStart(2,"0"); };
+    var d = new Date(activeDateStr + "T00:00:00");
     var dateStr = pad(d.getDate())+"."+pad(d.getMonth()+1)+"."+d.getFullYear();
     var script = "DAILY LOG SYSTEM v1.0\nINITIALIZING NEW SESSION...\n\nDATE: "+dateStr+"\nSTATUS: ONLINE\nUSER: ACTIVE\n\n> Loading memory...\n> Checking system state...\n> Ready for input.\n\n[ BEGIN DAILY LOG ]";
     var reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -280,7 +311,7 @@ p{margin:0;}
   })();
 
   // ---------- State + persistence ----------
-  var todayStr = new Date().toISOString().slice(0,10);
+  var todayStr = activeDateStr;
   var STORAGE_KEY = "dailylog_" + todayStr;
   var URL_KEY = "dailylog_weburl";
   var LISTS_KEY = "dailylog_customlists";
@@ -340,6 +371,49 @@ p{margin:0;}
   if (!(function(){ try { return !!localStorage.getItem(URL_KEY); } catch(e){ return false; } })()) {
     settingsPanel.classList.add("open");
   }
+
+  // ---------- Date field (today by default, editable for backfill) ----------
+  var dateDisplay = document.getElementById("dateDisplay");
+  var dateInput = document.getElementById("dateInput");
+  var activeDateDisplay = (function(){
+    var d = new Date(activeDateStr + "T00:00:00");
+    return pad(d.getDate())+"."+pad(d.getMonth()+1)+"."+d.getFullYear();
+  })();
+  (function(){
+    dateDisplay.textContent = activeDateDisplay;
+    if (activeDateStr === realTodayStr) {
+      var flag = document.createElement("span");
+      flag.className = "today-flag";
+      flag.textContent = "(TODAY)";
+      dateDisplay.appendChild(flag);
+    }
+    dateInput.value = activeDateStr;
+    dateInput.max = realTodayStr;
+  })();
+  function openDateInput(){
+    dateDisplay.style.display = "none";
+    dateInput.style.display = "inline-block";
+    dateInput.focus();
+    if (dateInput.showPicker) { try { dateInput.showPicker(); } catch(e) {} }
+  }
+  dateDisplay.addEventListener("click", openDateInput);
+  dateDisplay.addEventListener("keydown", function(ev){
+    if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); openDateInput(); }
+  });
+  dateInput.addEventListener("change", function(){
+    var picked = dateInput.value;
+    if (!picked) { dateDisplay.style.display = ""; dateInput.style.display = "none"; return; }
+    var params = new URLSearchParams(location.search);
+    if (picked === realTodayStr) { params.delete("date"); } else { params.set("date", picked); }
+    var qs = params.toString();
+    location.href = location.pathname + (qs ? "?" + qs : "");
+  });
+  dateInput.addEventListener("blur", function(){
+    if (dateInput.style.display !== "none") {
+      dateDisplay.style.display = "";
+      dateInput.style.display = "none";
+    }
+  });
 
   function makeRow(name, desc){
     var row = document.createElement("div");
@@ -721,7 +795,8 @@ p{margin:0;}
       body: JSON.stringify(state)
     }).then(function(){
       var now = new Date();
-      setStatus("Saved at " + now.toLocaleTimeString("en-US", {hour:"2-digit", minute:"2-digit"}) + ".", false);
+      var forStr = activeDateStr === realTodayStr ? "" : " for " + activeDateDisplay;
+      setStatus("Saved" + forStr + " at " + now.toLocaleTimeString("en-US", {hour:"2-digit", minute:"2-digit"}) + ".", false);
     }).catch(function(){
       setStatus("Couldn't send. This preview sandbox can't reach Google — host the page (e.g. GitHub Pages) to save for real.", true);
     });
