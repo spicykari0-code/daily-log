@@ -101,6 +101,16 @@ p{margin:0;}
 }
 .bracket-add-input:focus{outline:none;border-color:var(--green);}
 
+.bracket-list-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:2px;}
+.list-edit-btn{
+  font-family:var(--font-body);font-size:0.85rem;letter-spacing:0.03em;color:var(--green-dim);
+  background:none;border:1px solid var(--green-dim);padding:4px 10px;cursor:pointer;
+}
+.list-edit-btn:hover{border-color:var(--green);color:var(--green);}
+.list-edit-btn.active{border-color:var(--green);color:var(--green);}
+.bracket-list.edit-mode .bracket-item{border:1px dashed var(--green-dim);padding:4px 8px;}
+.bracket-list.edit-mode .bracket-item:hover{border-color:var(--green);color:var(--green);}
+
 .card{border:1px solid var(--green-mid);padding:6px 18px;}
 
 .row{padding:16px 0;border-bottom:1px solid var(--green-faint);}
@@ -115,10 +125,17 @@ p{margin:0;}
   border:1px solid var(--green);line-height:1;
 }
 .stepper button:hover{background:var(--green);color:var(--invert-text);}
-.stepper .value{font-size:1.15rem;min-width:52px;text-align:center;color:var(--green);}
+.stepper .value{font-size:1.15rem;min-width:52px;text-align:center;color:var(--green);cursor:pointer;border-bottom:1px dashed var(--green-faint);}
+.stepper .value:hover{border-color:var(--green);}
 .stepper .unit{font-size:0.9rem;color:var(--green-dim);}
 .stepper.small button{width:26px;height:26px;font-size:1rem;}
 .stepper.small .value{font-size:1rem;min-width:44px;}
+.value-input{
+  font-family:var(--font-body);font-size:1.15rem;min-width:52px;max-width:70px;text-align:center;
+  background:transparent;border:none;border-bottom:1px solid var(--green);color:var(--green);
+}
+.value-input:focus{outline:none;}
+.stepper.small .value-input{font-size:1rem;min-width:44px;}
 
 .row-options{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;}
 .row-options.nowrap{flex-wrap:nowrap;}
@@ -325,7 +342,7 @@ p{margin:0;}
     coffee: 0, cigarettes: 0,
     dreamPick: "", dreamText: "",
     workHours: 0, workSatisfaction: "",
-    readingMinutes: 0, readingBooks: [],
+    readingMinutes: {}, readingBooks: [],
     exerciseMinutes: {},
     meds: [],
     wisdomText: "",
@@ -336,22 +353,37 @@ p{margin:0;}
     var saved = localStorage.getItem(STORAGE_KEY);
     if (saved) state = Object.assign({}, defaultState, JSON.parse(saved));
   } catch(e) {}
+  if (!state.readingMinutes || typeof state.readingMinutes !== "object") state.readingMinutes = {};
 
   function persist(){
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
   }
 
   var customLists = { books: [], exercise: [], meds: [] };
+  var listsExisted = false;
   try {
     var savedLists = localStorage.getItem(LISTS_KEY);
-    if (savedLists) customLists = Object.assign(customLists, JSON.parse(savedLists));
+    if (savedLists) { customLists = Object.assign(customLists, JSON.parse(savedLists)); listsExisted = true; }
   } catch(e) {}
   function persistLists(){
     try { localStorage.setItem(LISTS_KEY, JSON.stringify(customLists)); } catch(e) {}
   }
+  if (!listsExisted){
+    customLists.meds = ["Vitamin D","Magnesium","Omega-3"];
+    customLists.books = ["Atomic Habits","Dune","1984"];
+    customLists.exercise = ["Stretching","Rollerblading","Strength"];
+    persistLists();
+  }
   function addToCustomList(key, label){
     if (customLists[key].indexOf(label) === -1){
       customLists[key].push(label);
+      persistLists();
+    }
+  }
+  function removeFromCustomList(key, label){
+    var i = customLists[key].indexOf(label);
+    if (i !== -1){
+      customLists[key].splice(i,1);
       persistLists();
     }
   }
@@ -491,7 +523,8 @@ p{margin:0;}
     return wrap;
   }
 
-  function addStepper(container, unit, small, onChange, initial){
+  function addStepper(container, unit, small, onChange, initial, step){
+    step = step || 1;
     var stepper = document.createElement("div");
     stepper.className = "stepper" + (small ? " small" : "");
     var value = initial || 0;
@@ -501,9 +534,51 @@ p{margin:0;}
     plus.type = "button"; plus.textContent = "+";
     var val = document.createElement("span");
     val.className = "value";
-    function render(){ val.innerHTML = value + " <span class='unit'>"+unit+"</span>"; }
-    minus.addEventListener("click", function(){ value = Math.max(0, value - 1); render(); if(onChange) onChange(value); });
-    plus.addEventListener("click", function(){ value = value + 1; render(); if(onChange) onChange(value); });
+    val.tabIndex = 0;
+
+    function fmt(v){
+      var r = Math.round(v * 1000) / 1000;
+      return String(r);
+    }
+    function clamp(v){
+      if (isNaN(v)) return value;
+      v = Math.max(0, v);
+      return Math.round(v * 1000) / 1000;
+    }
+    function render(){ val.innerHTML = fmt(value) + " <span class='unit'>"+unit+"</span>"; }
+
+    function openEdit(){
+      var input = document.createElement("input");
+      input.type = "text";
+      input.inputMode = "decimal";
+      input.className = "value-input";
+      input.value = fmt(value);
+      stepper.replaceChild(input, val);
+      input.focus();
+      input.select();
+      var done = false;
+      function commit(){
+        if (done) return;
+        done = true;
+        var raw = input.value.replace(",", ".").trim();
+        var num = parseFloat(raw);
+        if (!isNaN(num) && /^\d+(\.\d+)?$/.test(raw)) { value = clamp(num); }
+        render();
+        stepper.replaceChild(val, input);
+        if (onChange) onChange(value);
+      }
+      input.addEventListener("keydown", function(e){
+        if (e.key === "Enter") { e.preventDefault(); commit(); }
+        if (e.key === "Escape") { done = true; stepper.replaceChild(val, input); }
+      });
+      input.addEventListener("blur", commit);
+    }
+    val.addEventListener("click", openEdit);
+    val.addEventListener("keydown", function(e){
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openEdit(); }
+    });
+    minus.addEventListener("click", function(){ value = clamp(value - step); render(); if(onChange) onChange(value); });
+    plus.addEventListener("click", function(){ value = clamp(value + step); render(); if(onChange) onChange(value); });
     render();
     stepper.appendChild(minus); stepper.appendChild(val); stepper.appendChild(plus);
     container.appendChild(stepper);
@@ -524,6 +599,7 @@ p{margin:0;}
 
   function addBracketList(row, items, addable, opts){
     opts = opts || {};
+    var editing = false;
     var wrap = document.createElement("div");
     wrap.className = "bracket-list";
     row.appendChild(wrap);
@@ -535,10 +611,20 @@ p{margin:0;}
       item.setAttribute("aria-pressed", checked ? "true" : "false");
       function render(){
         var pressed = item.getAttribute("aria-pressed") === "true";
-        item.innerHTML = "<span class='brk'>["+(pressed?"X":" ")+"]</span> "+label;
+        if (editing){
+          item.innerHTML = "<span class='brk'>[×]</span> " + label;
+        } else {
+          item.innerHTML = "<span class='brk'>["+(pressed?"X":" ")+"]</span> "+label;
+        }
       }
       render();
+      item._render = render;
       item.addEventListener("click", function(){
+        if (editing){
+          wrap.removeChild(item);
+          if (opts.onRemove) opts.onRemove(label);
+          return;
+        }
         var now = item.getAttribute("aria-pressed") === "true";
         item.setAttribute("aria-pressed", now ? "false" : "true");
         render();
@@ -581,6 +667,21 @@ p{margin:0;}
         input.addEventListener("blur", commit);
       });
       wrap.appendChild(addBtn);
+    }
+
+    if (opts.editable){
+      var editBtn = document.createElement("button");
+      editBtn.type = "button";
+      editBtn.className = "list-edit-btn";
+      editBtn.textContent = "[ EDIT LIST ]";
+      editBtn.addEventListener("click", function(){
+        editing = !editing;
+        editBtn.textContent = editing ? "[ DONE ]" : "[ EDIT LIST ]";
+        editBtn.classList.toggle("active", editing);
+        wrap.classList.toggle("edit-mode", editing);
+        wrap.querySelectorAll(".bracket-item").forEach(function(el){ if (el._render) el._render(); });
+      });
+      row.appendChild(editBtn);
     }
     return wrap;
   }
@@ -644,7 +745,7 @@ p{margin:0;}
   r3QualityLine.className = "desc";
   r3QualityLine.innerHTML = "&gt; RECOVERY QUALITY: " + (state.sleepQuality ? state.sleepQuality.toUpperCase() : "—");
   r3._head.querySelector(".row-title").appendChild(r3QualityLine);
-  addStepper(r3._head, "hrs", false, function(v){ state.sleepHours = v; persist(); r3Desc.innerHTML = "&gt; RECOVERY TIME: " + v + " HRS"; }, state.sleepHours);
+  addStepper(r3._head, "hrs", false, function(v){ state.sleepHours = v; persist(); r3Desc.innerHTML = "&gt; RECOVERY TIME: " + v + " HRS"; }, state.sleepHours, 0.5);
   addOptions(r3, ["Bad","Meh","Okay","Good","Excellent"], false, {nowrap:true,
     isPressed:function(l){ return state.sleepQuality === l; },
     onToggle:function(pressed,label){
@@ -661,7 +762,7 @@ p{margin:0;}
   blockSimple.appendChild(r4);
 
   var r5 = makeRow("Screen Activity", "&gt; READING DEVICE USAGE...");
-  addStepper(r5._head, "hrs", false, function(v){ state.screenHours = v; persist(); }, state.screenHours);
+  addStepper(r5._head, "hrs", false, function(v){ state.screenHours = v; persist(); }, state.screenHours, 0.25);
   blockSimple.appendChild(r5);
 
   var r6 = makeRow("Caffeine Input", "&gt; TRACKING DAILY INTAKE");
@@ -692,20 +793,55 @@ p{margin:0;}
 
   // ================= READING =================
   var blockReading = document.getElementById("blockReading");
-  var rReading = makeRow("");
-  addStepper(rReading._head, "min", false, function(v){ state.readingMinutes = v; persist(); }, state.readingMinutes);
-  var bookOptions = ["Atomic Habits","Dune","1984"];
-  customLists.books.forEach(function(b){ if (bookOptions.indexOf(b) === -1) bookOptions.push(b); });
-  addOptions(rReading, bookOptions, true, {addable:true,
+  var rReading = makeRow("", "&gt; CURRENTLY READING:");
+  var readingSubs = document.createElement("div");
+  readingSubs.className = "sub-steppers";
+  var readingSubMap = {};
+  function ensureReadingSubStepper(label){
+    if (readingSubMap[label]) return;
+    var subRow = document.createElement("div");
+    subRow.className = "sub-stepper-row";
+    var sname = document.createElement("span");
+    sname.className = "sname"; sname.textContent = label;
+    subRow.appendChild(sname);
+    addStepper(subRow, "min", true, function(v){ state.readingMinutes[label] = v; persist(); }, state.readingMinutes[label] || 0, 15);
+    readingSubs.appendChild(subRow);
+    readingSubMap[label] = subRow;
+  }
+  addBracketList(rReading, customLists.books.slice(), true, {
+    editable: true,
     isPressed:function(l){ return state.readingBooks.indexOf(l) !== -1; },
     onToggle:function(pressed,label){
       addToCustomList("books", label);
       var i = state.readingBooks.indexOf(label);
-      if (pressed && i === -1) state.readingBooks.push(label);
-      if (!pressed && i !== -1) state.readingBooks.splice(i,1);
+      if (pressed){
+        if (i === -1) state.readingBooks.push(label);
+        if (!state.readingMinutes.hasOwnProperty(label)) state.readingMinutes[label] = 0;
+        ensureReadingSubStepper(label);
+      } else {
+        if (i !== -1) state.readingBooks.splice(i,1);
+        if (readingSubMap[label]){
+          readingSubs.removeChild(readingSubMap[label]);
+          delete readingSubMap[label];
+        }
+        delete state.readingMinutes[label];
+      }
+      persist();
+    },
+    onRemove:function(label){
+      removeFromCustomList("books", label);
+      var i = state.readingBooks.indexOf(label);
+      if (i !== -1) state.readingBooks.splice(i,1);
+      if (readingSubMap[label]){
+        readingSubs.removeChild(readingSubMap[label]);
+        delete readingSubMap[label];
+      }
+      delete state.readingMinutes[label];
       persist();
     }
   });
+  Object.keys(state.readingMinutes).forEach(ensureReadingSubStepper);
+  rReading.appendChild(readingSubs);
   blockReading.appendChild(rReading);
 
   // ================= EXERCISE =================
@@ -751,9 +887,8 @@ p{margin:0;}
   // ================= MEDICATIONS =================
   var blockMeds = document.getElementById("blockMeds");
   var rMeds = makeRow("", "&gt; REGISTERED TODAY:");
-  var medOptions = ["Vitamin D","Magnesium","Omega-3"];
-  customLists.meds.forEach(function(m){ if (medOptions.indexOf(m) === -1) medOptions.push(m); });
-  addBracketList(rMeds, medOptions, true, {
+  addBracketList(rMeds, customLists.meds.slice(), true, {
+    editable: true,
     isPressed:function(l){ return state.meds.indexOf(l) !== -1; },
     onToggle:function(pressed,label){
       addToCustomList("meds", label);
@@ -761,6 +896,11 @@ p{margin:0;}
       if (pressed && i === -1) state.meds.push(label);
       if (!pressed && i !== -1) state.meds.splice(i,1);
       persist();
+    },
+    onRemove:function(label){
+      removeFromCustomList("meds", label);
+      var i = state.meds.indexOf(label);
+      if (i !== -1) { state.meds.splice(i,1); persist(); }
     }
   });
   blockMeds.appendChild(rMeds);
