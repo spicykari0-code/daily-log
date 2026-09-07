@@ -140,7 +140,7 @@ p{margin:0;}
 .row-options{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;}
 .row-options.nowrap{flex-wrap:nowrap;}
 .opt{
-  flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:6px;
+  flex:1 1 90px;max-width:120px;min-width:0;display:flex;flex-direction:column;align-items:center;gap:6px;
   padding:10px 4px;border:1px solid var(--green-dim);background:transparent;cursor:pointer;
 }
 .opt:hover{border-color:var(--green);}
@@ -857,7 +857,7 @@ p{margin:0;}
     var sname = document.createElement("span");
     sname.className = "sname"; sname.textContent = label;
     subRow.appendChild(sname);
-    addStepper(subRow, "min", true, function(v){ state.exerciseMinutes[label] = v; persist(); }, state.exerciseMinutes[label] || 0);
+    addStepper(subRow, "min", true, function(v){ state.exerciseMinutes[label] = v; persist(); }, state.exerciseMinutes[label] || 0, 15);
     exerciseSubs.appendChild(subRow);
     exerciseSubMap[label] = subRow;
   }
@@ -928,17 +928,36 @@ p{margin:0;}
       setStatus("Add your Web App URL in settings first.", true);
       return;
     }
-    setStatus("Saving…", false);
-    fetch(webAppUrl, {
-      method: "POST",
-      mode: "no-cors",
-      body: JSON.stringify(state)
-    }).then(function(){
-      var now = new Date();
-      var forStr = activeDateStr === realTodayStr ? "" : " for " + activeDateDisplay;
-      setStatus("Saved" + forStr + " at " + now.toLocaleTimeString("en-US", {hour:"2-digit", minute:"2-digit"}) + ".", false);
+
+    function doActualSave(){
+      setStatus("Saving…", false);
+      fetch(webAppUrl, {
+        method: "POST",
+        mode: "no-cors",
+        body: JSON.stringify(state)
+      }).then(function(){
+        var now = new Date();
+        var forStr = activeDateStr === realTodayStr ? "" : " for " + activeDateDisplay;
+        setStatus("Saved" + forStr + " at " + now.toLocaleTimeString("en-US", {hour:"2-digit", minute:"2-digit"}) + ".", false);
+      }).catch(function(){
+        setStatus("Couldn't send. This preview sandbox can't reach Google — host the page (e.g. GitHub Pages) to save for real.", true);
+      });
+    }
+
+    setStatus("Checking existing data…", false);
+    var checkUrl = webAppUrl + (webAppUrl.indexOf("?") === -1 ? "?" : "&") + "date=" + encodeURIComponent(state.date);
+    fetch(checkUrl).then(function(r){ return r.json(); }).then(function(res){
+      if (res && res.exists){
+        if (window.confirm("There's already a saved entry for " + activeDateDisplay + ". Overwrite it?")){
+          doActualSave();
+        } else {
+          setStatus("Cancelled.", false);
+        }
+      } else {
+        doActualSave();
+      }
     }).catch(function(){
-      setStatus("Couldn't send. This preview sandbox can't reach Google — host the page (e.g. GitHub Pages) to save for real.", true);
+      doActualSave();
     });
   });
 
