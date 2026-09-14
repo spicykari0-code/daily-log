@@ -35,14 +35,19 @@ button{font:inherit;}
   display:flex;align-items:center;justify-content:center;
   background:linear-gradient(155deg,rgba(198,255,61,0.06),rgba(0,0,0,0.3));
 }
-.globe-deco svg{
-  width:76%;height:76%;fill:none;stroke:var(--green-mid);stroke-width:0.6;
-  animation:sideGlobeSpin 14s linear infinite;
-}
+.globe-deco svg{width:76%;height:76%;fill:none;stroke:var(--green-mid);stroke-width:0.6;}
 .globe-deco svg circle{stroke:var(--green);stroke-width:0.8;}
-@keyframes sideGlobeSpin{
-  from{transform:rotate(0deg);}
-  to{transform:rotate(360deg);}
+.globe-deco svg .merid{
+  transform-box:fill-box;transform-origin:center;
+  animation:globeAxisSpin 4s linear infinite;
+}
+.globe-deco svg .merid.b{animation-delay:-2s;}
+@keyframes globeAxisSpin{
+  0%{transform:scaleX(1);}
+  25%{transform:scaleX(0);}
+  50%{transform:scaleX(-1);}
+  75%{transform:scaleX(0);}
+  100%{transform:scaleX(1);}
 }
 h1{margin:0;}
 p{margin:0;}
@@ -369,8 +374,8 @@ p{margin:0;}
       <circle cx="50" cy="50" r="42"/>
       <ellipse cx="50" cy="50" rx="42" ry="14"/>
       <ellipse cx="50" cy="50" rx="42" ry="28"/>
-      <ellipse cx="50" cy="50" rx="14" ry="42"/>
-      <ellipse cx="50" cy="50" rx="28" ry="42"/>
+      <ellipse class="merid a" cx="50" cy="50" rx="14" ry="42"/>
+      <ellipse class="merid b" cx="50" cy="50" rx="28" ry="42"/>
     </svg>
   </div>
   <div class="card" id="blockReading"></div>
