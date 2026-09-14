@@ -40,7 +40,7 @@ p{margin:0;}
 }
 .hero p.sub{color:var(--green-dim);font-size:1.1rem;margin-top:10px;line-height:1.5;max-width:56ch;}
 
-.date-field{display:flex;align-items:center;gap:10px;margin-top:16px;flex-wrap:wrap;}
+.date-field{position:relative;display:flex;align-items:center;gap:10px;margin-top:16px;flex-wrap:wrap;}
 .date-field .date-label{font-size:0.95rem;color:var(--green-dim);letter-spacing:0.03em;text-transform:uppercase;}
 .date-display{
   font-family:var(--font-body);font-size:1.15rem;color:var(--green);letter-spacing:0.02em;
@@ -48,11 +48,31 @@ p{margin:0;}
 }
 .date-display:hover, .date-display:focus{outline:none;border-color:var(--green);}
 .date-display .today-flag{color:var(--green-dim);font-size:0.85rem;margin-left:6px;}
-.date-input{
-  font-family:var(--font-body);font-size:1.1rem;color:var(--green);color-scheme:dark;
-  background:var(--bg);border:1px solid var(--green);padding:5px 10px;
+
+.cal-popup{
+  display:none;position:absolute;top:calc(100% + 8px);left:0;z-index:30;
+  background:var(--bg);border:2px solid var(--green);padding:10px;min-width:210px;
+  box-shadow:4px 4px 0 var(--green-faint);
 }
-.date-input:focus{outline:none;}
+.cal-popup.open{display:block;}
+.cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;gap:8px;}
+.cal-nav{
+  width:24px;height:24px;background:none;border:1px solid var(--green-dim);color:var(--green);
+  cursor:pointer;font-size:1rem;line-height:1;flex:none;
+}
+.cal-nav:hover{border-color:var(--green);}
+.cal-title{font-size:0.95rem;color:var(--white);letter-spacing:0.05em;text-transform:uppercase;}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;}
+.cal-dow{font-size:0.68rem;color:var(--green-dim);text-align:center;padding:2px 0;}
+.cal-day{
+  font-family:var(--font-body);font-size:0.95rem;color:var(--green-dim);
+  background:none;border:1px solid transparent;cursor:pointer;padding:5px 0;text-align:center;
+}
+.cal-day:hover{border-color:var(--green-dim);color:var(--green);}
+.cal-day.today{color:var(--white);}
+.cal-day.selected{background:var(--green);color:var(--invert-text);border-color:var(--green);}
+.cal-day.disabled{color:var(--green-faint);cursor:default;}
+.cal-day.other-month{visibility:hidden;cursor:default;}
 
 .group-label{
   margin:30px 0 10px;padding-bottom:6px;border-bottom:1px dashed var(--green-faint);
@@ -162,15 +182,24 @@ p{margin:0;}
 .row-options.nowrap{flex-wrap:nowrap;}
 .opt{
   flex:0 0 calc((100% - 40px) / 6);min-width:0;display:flex;flex-direction:column;align-items:center;gap:6px;
-  padding:10px 4px;border:2px solid var(--green-dim);background:transparent;cursor:pointer;
-  box-shadow:2px 2px 0 var(--green-faint);transition:box-shadow .08s,transform .08s;
+  padding:10px 4px;border:2px solid var(--green-dim);cursor:pointer;
+  background:linear-gradient(155deg,rgba(198,255,61,0.10),rgba(0,0,0,0.35));
+  box-shadow:2px 2px 0 var(--green-faint),inset 1px 1px 2px rgba(198,255,61,0.25),inset -2px -2px 5px rgba(0,0,0,0.55);
+  transition:box-shadow .08s,transform .08s;
 }
-.opt:active{box-shadow:0 0 0 var(--green-faint);transform:translate(2px,2px);}
-.opt[aria-pressed="true"]{box-shadow:2px 2px 0 var(--green-dim);}
+.opt:active{
+  box-shadow:0 0 0 var(--green-faint),inset -1px -1px 2px rgba(198,255,61,0.15),inset 2px 2px 5px rgba(0,0,0,0.6);
+  transform:translate(2px,2px);
+}
+.opt[aria-pressed="true"]{box-shadow:2px 2px 0 var(--green-dim),inset 1px 1px 3px rgba(198,255,61,0.4),inset -2px -2px 6px rgba(0,0,0,0.4);}
 .opt:hover{border-color:var(--green);}
-.opt .box{width:15px;height:15px;border:1.5px solid var(--green);position:relative;flex:none;}
+.opt .box{
+  width:15px;height:15px;border:1.5px solid var(--green);position:relative;flex:none;
+  background:radial-gradient(circle at 35% 30%,rgba(198,255,61,0.35),rgba(0,0,0,0.3));
+  box-shadow:inset 1px 1px 2px rgba(0,0,0,0.5);
+}
 .opt .box::after{content:"";position:absolute;inset:3px;background:transparent;}
-.opt[aria-pressed="true"]{border-color:var(--green);background:rgba(198,255,61,0.07);}
+.opt[aria-pressed="true"]{border-color:var(--green);background:linear-gradient(155deg,rgba(198,255,61,0.22),rgba(0,0,0,0.3));}
 .opt[aria-pressed="true"] .box::after{background:var(--green);}
 .opt .lbl{
   font-size:0.92rem;color:var(--green-dim);letter-spacing:0.01em;text-align:center;
@@ -217,6 +246,7 @@ p{margin:0;}
 .scale-row{display:flex;gap:4px;flex-wrap:wrap;margin-top:12px;}
 .scale-tick{width:10px;height:18px;border:1px solid var(--green-dim);background:transparent;flex:none;}
 .scale-tick.filled{background:var(--green);border-color:var(--green);}
+.scale-row.lg .scale-tick{width:14px;height:34px;}
 .photo-preview-wrap{position:relative;display:none;margin-top:12px;max-width:180px;}
 .photo-preview-wrap.show{display:inline-block;}
 .photo-preview{display:block;width:100%;border:1px solid var(--green-mid);}
@@ -275,7 +305,14 @@ p{margin:0;}
     <div class="date-field">
       <span class="date-label">&gt; LOG DATE:</span>
       <span class="date-display" id="dateDisplay" tabindex="0" role="button"></span>
-      <input type="date" id="dateInput" class="date-input" style="display:none">
+      <div class="cal-popup" id="calPopup">
+        <div class="cal-head">
+          <button type="button" class="cal-nav" id="calPrev">&lsaquo;</button>
+          <span class="cal-title" id="calTitle"></span>
+          <button type="button" class="cal-nav" id="calNext">&rsaquo;</button>
+        </div>
+        <div class="cal-grid" id="calGrid"></div>
+      </div>
     </div>
   </div>
 
@@ -449,7 +486,6 @@ p{margin:0;}
 
   // ---------- Date field (today by default, editable for backfill) ----------
   var dateDisplay = document.getElementById("dateDisplay");
-  var dateInput = document.getElementById("dateInput");
   var activeDateDisplay = (function(){
     var d = new Date(activeDateStr + "T00:00:00");
     return pad(d.getDate())+"."+pad(d.getMonth()+1)+"."+d.getFullYear();
@@ -462,31 +498,79 @@ p{margin:0;}
       flag.textContent = "(TODAY)";
       dateDisplay.appendChild(flag);
     }
-    dateInput.value = activeDateStr;
-    dateInput.max = realTodayStr;
   })();
-  function openDateInput(){
-    dateDisplay.style.display = "none";
-    dateInput.style.display = "inline-block";
-    dateInput.focus();
-    if (dateInput.showPicker) { try { dateInput.showPicker(); } catch(e) {} }
+
+  // ---------- Simple calendar popup ----------
+  var calPopup = document.getElementById("calPopup");
+  var calTitle = document.getElementById("calTitle");
+  var calGrid = document.getElementById("calGrid");
+  var calPrev = document.getElementById("calPrev");
+  var calNext = document.getElementById("calNext");
+  var calViewDate = new Date(activeDateStr + "T00:00:00");
+  var monthNames = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
+  var dowNames = ["MO","TU","WE","TH","FR","SA","SU"];
+
+  function calToISO(y,m,d){ return y+"-"+pad(m+1)+"-"+pad(d); }
+
+  function renderCalendar(){
+    var y = calViewDate.getFullYear();
+    var m = calViewDate.getMonth();
+    calTitle.textContent = monthNames[m] + " " + y;
+    calGrid.innerHTML = "";
+    dowNames.forEach(function(dn){
+      var el = document.createElement("div");
+      el.className = "cal-dow"; el.textContent = dn;
+      calGrid.appendChild(el);
+    });
+    var firstDay = new Date(y, m, 1);
+    var startOffset = (firstDay.getDay() + 6) % 7;
+    var daysInMonth = new Date(y, m + 1, 0).getDate();
+    for (var i = 0; i < startOffset; i++){
+      var blank = document.createElement("span");
+      blank.className = "cal-day other-month";
+      calGrid.appendChild(blank);
+    }
+    for (var day = 1; day <= daysInMonth; day++){
+      var iso = calToISO(y, m, day);
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "cal-day";
+      btn.textContent = day;
+      btn.setAttribute("data-iso", iso);
+      if (iso === realTodayStr) btn.classList.add("today");
+      if (iso === activeDateStr) btn.classList.add("selected");
+      if (iso > realTodayStr) btn.classList.add("disabled");
+      calGrid.appendChild(btn);
+    }
   }
-  dateDisplay.addEventListener("click", openDateInput);
-  dateDisplay.addEventListener("keydown", function(ev){
-    if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); openDateInput(); }
+
+  function openCal(){
+    calViewDate = new Date(activeDateStr + "T00:00:00");
+    renderCalendar();
+    calPopup.classList.add("open");
+  }
+  function closeCal(){ calPopup.classList.remove("open"); }
+
+  dateDisplay.addEventListener("click", function(){
+    if (calPopup.classList.contains("open")) { closeCal(); } else { openCal(); }
   });
-  dateInput.addEventListener("change", function(){
-    var picked = dateInput.value;
-    if (!picked) { dateDisplay.style.display = ""; dateInput.style.display = "none"; return; }
+  dateDisplay.addEventListener("keydown", function(ev){
+    if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); openCal(); }
+  });
+  calPrev.addEventListener("click", function(){ calViewDate.setMonth(calViewDate.getMonth() - 1); renderCalendar(); });
+  calNext.addEventListener("click", function(){ calViewDate.setMonth(calViewDate.getMonth() + 1); renderCalendar(); });
+  calGrid.addEventListener("click", function(e){
+    var btn = e.target.closest(".cal-day");
+    if (!btn || btn.classList.contains("disabled") || btn.classList.contains("other-month")) return;
+    var iso = btn.getAttribute("data-iso");
     var params = new URLSearchParams(location.search);
-    if (picked === realTodayStr) { params.delete("date"); } else { params.set("date", picked); }
+    if (iso === realTodayStr) { params.delete("date"); } else { params.set("date", iso); }
     var qs = params.toString();
     location.href = location.pathname + (qs ? "?" + qs : "");
   });
-  dateInput.addEventListener("blur", function(){
-    if (dateInput.style.display !== "none") {
-      dateDisplay.style.display = "";
-      dateInput.style.display = "none";
+  document.addEventListener("click", function(ev){
+    if (calPopup.classList.contains("open") && !calPopup.contains(ev.target) && ev.target !== dateDisplay && !dateDisplay.contains(ev.target)) {
+      closeCal();
     }
   });
 
@@ -961,7 +1045,7 @@ p{margin:0;}
   var blockMeds = document.getElementById("blockMeds");
   var rMeds = makeRow("", "&gt; REGISTERED TODAY:");
   var medsScale = document.createElement("div");
-  medsScale.className = "scale-row";
+  medsScale.className = "scale-row lg";
   function updateMedsScale(){
     renderScale(medsScale, state.meds.length, customLists.meds.length);
   }
