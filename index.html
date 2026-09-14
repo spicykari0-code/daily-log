@@ -28,7 +28,26 @@ body{
 }
 ::selection{background:var(--green);color:var(--invert-text);}
 button{font:inherit;}
-.page{max-width:680px;margin:0 auto;padding:clamp(20px,5vw,32px) clamp(14px,3vw,22px) 60px;}
+.page{position:relative;max-width:680px;margin:0 auto;padding:clamp(20px,5vw,32px) clamp(14px,3vw,22px) 60px;}
+
+.side-globe{
+  position:absolute;top:clamp(20px,5vw,32px);left:100%;margin-left:34px;
+  width:150px;height:150px;border:2px solid var(--green-dim);
+  display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(155deg,rgba(198,255,61,0.06),rgba(0,0,0,0.3));
+}
+.side-globe svg{
+  width:76%;height:76%;fill:none;stroke:var(--green-mid);stroke-width:0.6;
+  animation:sideGlobeSpin 14s linear infinite;
+}
+.side-globe svg circle{stroke:var(--green);stroke-width:0.8;}
+@keyframes sideGlobeSpin{
+  from{transform:rotate(0deg);}
+  to{transform:rotate(360deg);}
+}
+@media (max-width:1060px){
+  .side-globe{display:none;}
+}
 h1{margin:0;}
 p{margin:0;}
 
@@ -225,18 +244,6 @@ p{margin:0;}
 }
 .sub-stepper-row .scale-row{flex-basis:100%;margin-top:0;}
 .sub-stepper-row .sname{font-size:1.05rem;color:var(--green);text-transform:uppercase;letter-spacing:0.02em;}
-.book-info{display:flex;align-items:center;gap:10px;min-width:0;}
-.book-icon-box{
-  width:40px;height:40px;flex:none;border:2px solid var(--green-dim);
-  display:flex;align-items:center;justify-content:center;
-  background:linear-gradient(155deg,rgba(198,255,61,0.10),rgba(0,0,0,0.35));
-  box-shadow:inset 1px 1px 2px rgba(198,255,61,0.2),inset -2px -2px 4px rgba(0,0,0,0.5);
-}
-.book-icon-box svg{
-  width:65%;height:65%;fill:none;stroke:var(--green);stroke-width:1.4;
-  transition:opacity .15s,transform .15s;
-}
-.book-icon-box.changing svg{opacity:0;transform:scale(0.7) rotate(20deg);}
 
 .row-text{margin-top:12px;}
 .row-text textarea{
@@ -257,16 +264,17 @@ p{margin:0;}
 .photo-name{font-size:0.95rem;color:var(--green-dim);}
 .scale-row{display:flex;gap:4px;flex-wrap:wrap;margin-top:12px;}
 .scale-tick{width:10px;height:18px;border:1px solid var(--green-dim);background:transparent;flex:none;}
-.scale-tick.filled{background:var(--green);border-color:var(--green);}
-.scale-row.lg{flex-wrap:nowrap;gap:3px;}
+.scale-row.lg{flex-wrap:nowrap;gap:3px;position:relative;}
 .scale-row.lg .scale-tick{flex:1 1 0;width:auto;height:38px;}
-.scale-row.lg .scale-tick.filled{
-  animation:tickBlink 1.6s ease-in-out infinite,tickShimmer 2.4s linear infinite;
-  animation-delay:calc(var(--i) * 60ms),calc(var(--i) * 60ms);
+.scale-row.lg .scale-runner{
+  position:absolute;top:0;left:0;width:10%;height:38px;
+  background:var(--green);box-shadow:0 0 10px 1px var(--green);
+  animation:scaleRunnerMove 3.2s ease-in-out infinite,tickShimmer 2.4s linear infinite;
 }
-@keyframes tickBlink{
-  0%,100%{opacity:1;}
-  50%{opacity:0.45;}
+@keyframes scaleRunnerMove{
+  0%{left:0%;}
+  50%{left:90%;}
+  100%{left:0%;}
 }
 @keyframes tickShimmer{
   0%{filter:hue-rotate(0deg) brightness(1);}
@@ -323,6 +331,16 @@ p{margin:0;}
   <div class="boot" id="boot"><span id="bootText"></span><span class="cursor">&nbsp;</span></div>
 
   <div class="main-content" id="mainContent">
+
+  <div class="side-globe" aria-hidden="true">
+    <svg viewBox="0 0 100 100">
+      <circle cx="50" cy="50" r="42"/>
+      <ellipse cx="50" cy="50" rx="42" ry="14"/>
+      <ellipse cx="50" cy="50" rx="42" ry="28"/>
+      <ellipse cx="50" cy="50" rx="14" ry="42"/>
+      <ellipse cx="50" cy="50" rx="28" ry="42"/>
+    </svg>
+  </div>
 
   <div class="hero">
     <p class="kicker">&gt; layout test // crt skin</p>
@@ -839,41 +857,15 @@ p{margin:0;}
     return wrap;
   }
 
-  function renderScale(container, filled, total){
-    container.innerHTML = "";
-    total = Math.max(total, filled);
-    for (var i = 0; i < total; i++){
+  function buildLoadingScale(container, segments){
+    for (var i = 0; i < segments; i++){
       var t = document.createElement("span");
-      t.className = "scale-tick" + (i < filled ? " filled" : "");
-      t.style.setProperty("--i", i);
+      t.className = "scale-tick";
       container.appendChild(t);
     }
-  }
-
-  var BOOK_ICONS = [
-    '<svg viewBox="0 0 24 24"><polygon points="12,3 21,20 3,20"/></svg>',
-    '<svg viewBox="0 0 24 24"><polygon points="12,2 20,7 20,17 12,22 4,17 4,7"/></svg>',
-    '<svg viewBox="0 0 24 24"><polygon points="12,2 22,12 12,22 2,12"/></svg>',
-    '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.4"/></svg>',
-    '<svg viewBox="0 0 24 24"><line x1="12" y1="1.5" x2="12" y2="22.5"/><line x1="1.5" y1="12" x2="22.5" y2="12"/><line x1="4.8" y1="4.8" x2="19.2" y2="19.2"/><line x1="19.2" y1="4.8" x2="4.8" y2="19.2"/></svg>',
-    '<svg viewBox="0 0 24 24"><rect x="2" y="2" width="8" height="8"/><rect x="14" y="2" width="8" height="8"/><rect x="2" y="14" width="8" height="8"/><rect x="14" y="14" width="8" height="8"/></svg>',
-    '<svg viewBox="0 0 24 24"><polygon points="12,4 14.5,9.5 20.5,10 16,14 17.3,20 12,17 6.7,20 8,14 3.5,10 9.5,9.5"/></svg>',
-    '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><line x1="3" y1="12" x2="21" y2="12"/><ellipse cx="12" cy="12" rx="4" ry="9"/></svg>'
-  ];
-  function hashStr(s){
-    var h = 0;
-    for (var i = 0; i < s.length; i++){ h = (h * 31 + s.charCodeAt(i)) >>> 0; }
-    return h;
-  }
-  function setBookIcon(box, label, minutes){
-    var idx = (hashStr(label) + Math.floor((minutes || 0) / 15)) % BOOK_ICONS.length;
-    box.classList.add("changing");
-    setTimeout(function(){
-      box.innerHTML = BOOK_ICONS[idx];
-      requestAnimationFrame(function(){
-        requestAnimationFrame(function(){ box.classList.remove("changing"); });
-      });
-    }, 150);
+    var runner = document.createElement("span");
+    runner.className = "scale-runner";
+    container.appendChild(runner);
   }
 
   function addPhoto(row, onPicked, initialName, initialData){
@@ -1000,23 +992,12 @@ p{margin:0;}
     if (readingSubMap[label]) return;
     var subRow = document.createElement("div");
     subRow.className = "sub-stepper-row";
-    var info = document.createElement("div");
-    info.className = "book-info";
-    var iconBox = document.createElement("span");
-    iconBox.className = "book-icon-box";
     var sname = document.createElement("span");
     sname.className = "sname"; sname.textContent = label;
-    info.appendChild(iconBox);
-    info.appendChild(sname);
-    subRow.appendChild(info);
-    function updateBookIcon(v){
-      setBookIcon(iconBox, label, v || 0);
-    }
+    subRow.appendChild(sname);
     addStepper(subRow, "min", true, function(v){
       state.readingMinutes[label] = v; persist();
-      updateBookIcon(v);
     }, state.readingMinutes[label] || 0, 15);
-    updateBookIcon(state.readingMinutes[label] || 0);
     readingSubs.appendChild(subRow);
     readingSubMap[label] = subRow;
   }
@@ -1101,13 +1082,7 @@ p{margin:0;}
   var rMeds = makeRow("", "&gt; REGISTERED TODAY:");
   var medsScale = document.createElement("div");
   medsScale.className = "scale-row lg";
-  var MEDS_SCALE_SEGMENTS = 20;
-  function updateMedsScale(){
-    var total = customLists.meds.length;
-    var checked = state.meds.length;
-    var filled = total > 0 ? Math.round((checked / total) * MEDS_SCALE_SEGMENTS) : 0;
-    renderScale(medsScale, filled, MEDS_SCALE_SEGMENTS);
-  }
+  buildLoadingScale(medsScale, 20);
   addBracketList(rMeds, customLists.meds.slice(), true, {
     editable: true,
     isPressed:function(l){ return state.meds.indexOf(l) !== -1; },
@@ -1117,17 +1092,14 @@ p{margin:0;}
       if (pressed && i === -1) state.meds.push(label);
       if (!pressed && i !== -1) state.meds.splice(i,1);
       persist();
-      updateMedsScale();
     },
     onRemove:function(label){
       removeFromCustomList("meds", label);
       var i = state.meds.indexOf(label);
       if (i !== -1) { state.meds.splice(i,1); persist(); }
-      updateMedsScale();
     }
   });
   rMeds.appendChild(medsScale);
-  updateMedsScale();
   blockMeds.appendChild(rMeds);
 
   // ================= END OF DAY =================
