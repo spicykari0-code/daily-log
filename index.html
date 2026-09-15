@@ -39,6 +39,7 @@ button{font:inherit;}
 }
 .scope-deco{
   flex:1;min-width:0;height:110px;overflow:hidden;border:2px solid var(--green-dim);
+  position:relative;
   background:
     repeating-linear-gradient(90deg,rgba(198,255,61,0.16) 0,rgba(198,255,61,0.16) 1px,transparent 1px,transparent 18px),
     repeating-linear-gradient(0deg,rgba(198,255,61,0.16) 0,rgba(198,255,61,0.16) 1px,transparent 1px,transparent 18px),
@@ -47,14 +48,28 @@ button{font:inherit;}
 }
 .scope-deco svg{
   display:block;width:200%;height:70%;flex:none;
-  fill:none;stroke:var(--green);stroke-width:1.6;stroke-linejoin:round;stroke-linecap:round;
-  filter:drop-shadow(0 0 4px rgba(198,255,61,0.7));
+  fill:none;stroke:var(--green);stroke-width:0.9;stroke-linejoin:round;stroke-linecap:round;
+  filter:drop-shadow(0 0 3px rgba(198,255,61,0.6));
   animation:scopeScroll 4s linear infinite,tickShimmer 2.4s linear infinite;
 }
 @keyframes scopeScroll{
   from{transform:translateX(0);}
   to{transform:translateX(-50%);}
 }
+.scope-hud{
+  position:absolute;top:6px;right:8px;text-align:right;
+  font-family:var(--font-body);font-size:0.85rem;line-height:1.35;
+  letter-spacing:0.04em;color:var(--green-mid);pointer-events:none;
+}
+.scope-hud .hud-static{color:var(--green-dim);display:block;}
+.scope-hud .hud-blink{display:block;animation:hudBlink 1.3s steps(1) infinite;}
+.scope-hud .hud-cycle{position:relative;display:inline-block;width:2.2ch;height:1.35em;vertical-align:top;}
+.scope-hud .hud-cycle span{position:absolute;top:0;right:0;opacity:0;animation:hudCycle 3s steps(1) infinite;}
+.scope-hud .hud-cycle span:nth-child(1){animation-delay:0s;}
+.scope-hud .hud-cycle span:nth-child(2){animation-delay:-2s;}
+.scope-hud .hud-cycle span:nth-child(3){animation-delay:-1s;}
+@keyframes hudBlink{0%,49%{opacity:1;}50%,100%{opacity:0;}}
+@keyframes hudCycle{0%,32%{opacity:1;}33%,100%{opacity:0;}}
 .globe-tilt{
   width:80px;height:80px;position:relative;
   transform-style:preserve-3d;transform:rotateX(-18deg);
@@ -425,8 +440,13 @@ p{margin:0;}
     </div>
     <div class="scope-deco" aria-hidden="true">
       <svg viewBox="0 0 200 40" preserveAspectRatio="none">
-        <polyline points="0,20 20,20 23,17 26,15 29,17 32,20 35,20 37,23 39,3 41,30 43,20 50,20 58,20 63,15 68,14 73,17 78,20 100,20 120,20 123,17 126,15 129,17 132,20 135,20 137,23 139,3 141,30 143,20 150,20 158,20 163,15 168,14 173,17 178,20 200,20"/>
+        <polyline points="0,20 2.5,10.01 5,3.83 7.5,3.83 10,10.01 12.5,20 15,29.99 17.5,36.17 20,36.17 22.5,29.99 25,20 27.5,10.01 30,3.83 32.5,3.83 35,10.01 37.5,20 40,29.99 42.5,36.17 45,36.17 47.5,29.99 50,20 52.5,10.01 55,3.83 57.5,3.83 60,10.01 62.5,20 65,29.99 67.5,36.17 70,36.17 72.5,29.99 75,20 77.5,10.01 80,3.83 82.5,3.83 85,10.01 87.5,20 90,29.99 92.5,36.17 95,36.17 97.5,29.99 100,20 102.5,10.01 105,3.83 107.5,3.83 110,10.01 112.5,20 115,29.99 117.5,36.17 120,36.17 122.5,29.99 125,20 127.5,10.01 130,3.83 132.5,3.83 135,10.01 137.5,20 140,29.99 142.5,36.17 145,36.17 147.5,29.99 150,20 152.5,10.01 155,3.83 157.5,3.83 160,10.01 162.5,20 165,29.99 167.5,36.17 170,36.17 172.5,29.99 175,20 177.5,10.01 180,3.83 182.5,3.83 185,10.01 187.5,20 190,29.99 192.5,36.17 195,36.17 197.5,29.99 200,20"/>
       </svg>
+      <div class="scope-hud">
+        <span class="hud-static">0xF3.A2</span>
+        <span class="hud-blink">::REC</span>
+        <span class="hud-static">SIG<span class="hud-cycle"><span>7K</span><span>Q1</span><span>Z4</span></span></span>
+      </div>
     </div>
   </div>
   <div class="card" id="blockReading"></div>
