@@ -1,0 +1,729 @@
+<title>Compact Rows — CRT Skin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap">
+<style>
+:root{
+  --bg:#020402;
+  --green:#39ff6b;
+  --green-mid:#22b350;
+  --green-dim:#1c6b34;
+  --green-faint:#0a2e16;
+  --invert-text:#021208;
+  --font-title:'Press Start 2P',ui-monospace,monospace;
+  --font-body:'VT323',ui-monospace,'SFMono-Regular',monospace;
+}
+*{box-sizing:border-box;}
+html{background:var(--bg);}
+body{
+  color:var(--green);
+  background:
+    repeating-linear-gradient(0deg, rgba(57,255,107,0.035) 0px, rgba(57,255,107,0.035) 1px, transparent 1px, transparent 3px),
+    var(--bg);
+  font-family:var(--font-body);
+}
+::selection{background:var(--green);color:var(--invert-text);}
+button{font:inherit;}
+.page{max-width:680px;margin:0 auto;padding:clamp(20px,5vw,32px) clamp(14px,3vw,22px) 60px;}
+h1{margin:0;}
+p{margin:0;}
+
+.hero{margin-bottom:22px;}
+.hero .kicker{font-size:1rem;letter-spacing:0.05em;text-transform:uppercase;color:var(--green-dim);}
+.hero h1{
+  font-family:var(--font-title);font-size:clamp(1.3rem,5vw,1.8rem);color:var(--green);
+  margin-top:8px;line-height:1.4;
+}
+.hero p.sub{color:var(--green-dim);font-size:1.1rem;margin-top:10px;line-height:1.5;max-width:56ch;}
+
+.group-label{
+  margin:30px 0 10px;padding-bottom:6px;border-bottom:1px dashed var(--green-faint);
+}
+.group-label:first-of-type{margin-top:0;}
+.group-label .title{
+  font-size:1.15rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--green);
+  font-weight:normal;
+}
+.group-label .caption{
+  font-size:0.9rem;color:var(--green-dim);margin-top:2px;letter-spacing:0.02em;
+}
+
+/* ---------- Boot sequence ---------- */
+.boot{
+  color:var(--green);font-family:var(--font-body);font-size:1.1rem;line-height:1.5;
+  white-space:pre-wrap;margin-bottom:28px;
+}
+.boot .cursor{display:inline-block;width:0.55em;background:var(--green);animation:blink 1s step-end infinite;}
+@keyframes blink{50%{opacity:0;}}
+@media (prefers-reduced-motion: reduce){
+  .boot .cursor{animation:none;}
+}
+
+.main-content{opacity:0;transition:opacity .6s ease;}
+.main-content.show{opacity:1;}
+@media (prefers-reduced-motion: reduce){
+  .main-content{transition:none;}
+}
+
+/* ---------- Bracket checklist ---------- */
+.bracket-list{display:flex;flex-direction:column;gap:8px;margin-top:12px;}
+.bracket-item{
+  display:flex;align-items:center;gap:10px;cursor:pointer;background:none;border:none;
+  font-family:var(--font-body);font-size:1.15rem;color:var(--green-dim);text-align:left;
+  padding:4px 2px;text-transform:uppercase;letter-spacing:0.02em;
+}
+.bracket-item .brk{color:var(--green);flex:none;}
+.bracket-item[aria-pressed="true"]{color:var(--green);}
+.bracket-item:hover{color:var(--green);}
+.bracket-add{
+  display:flex;align-items:center;gap:10px;background:none;border:none;cursor:pointer;
+  font-family:var(--font-body);font-size:1.15rem;color:var(--green-dim);text-align:left;padding:4px 2px;
+}
+.bracket-add:hover{color:var(--green);}
+.bracket-add-input{
+  font-family:var(--font-body);font-size:1.15rem;background:transparent;border:none;border-bottom:1px solid var(--green-dim);
+  color:var(--green);padding:4px 2px;flex:1;min-width:0;
+}
+.bracket-add-input:focus{outline:none;border-color:var(--green);}
+
+.card{border:1px solid var(--green-mid);padding:6px 18px;}
+
+.row{padding:16px 0;border-bottom:1px solid var(--green-faint);}
+.row:last-child{border-bottom:none;}
+.row-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap;}
+.row-title .name{font-size:1.2rem;color:var(--green);letter-spacing:0.02em;}
+.row-title .desc{font-size:0.92rem;color:var(--green-dim);margin-top:2px;line-height:1.3;}
+
+.stepper{display:flex;align-items:center;gap:12px;flex:none;}
+.stepper button{
+  width:32px;height:32px;background:none;color:var(--green);font-size:1.15rem;cursor:pointer;
+  border:1px solid var(--green);line-height:1;
+}
+.stepper button:hover{background:var(--green);color:var(--invert-text);}
+.stepper .value{font-size:1.15rem;min-width:52px;text-align:center;color:var(--green);}
+.stepper .unit{font-size:0.9rem;color:var(--green-dim);}
+.stepper.small button{width:26px;height:26px;font-size:1rem;}
+.stepper.small .value{font-size:1rem;min-width:44px;}
+
+.row-options{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;}
+.row-options.nowrap{flex-wrap:nowrap;}
+.opt{
+  flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:6px;
+  padding:10px 4px;border:1px solid var(--green-dim);background:transparent;cursor:pointer;
+}
+.opt:hover{border-color:var(--green);}
+.opt .box{width:15px;height:15px;border:1.5px solid var(--green);position:relative;flex:none;}
+.opt .box::after{content:"";position:absolute;inset:3px;background:transparent;}
+.opt[aria-pressed="true"]{border-color:var(--green);background:rgba(57,255,107,0.07);}
+.opt[aria-pressed="true"] .box::after{background:var(--green);}
+.opt .lbl{
+  font-size:0.92rem;color:var(--green-dim);letter-spacing:0.01em;text-align:center;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;text-transform:uppercase;
+}
+.opt[aria-pressed="true"] .lbl{color:var(--green);}
+.opt.add{border-style:dashed;color:var(--green-dim);}
+.opt.add .lbl{color:var(--green-dim);}
+.opt.add:hover{border-color:var(--green);}
+.opt.add:hover .lbl{color:var(--green);}
+
+.add-input{
+  flex:1;min-width:0;font-family:var(--font-body);font-size:1rem;text-align:center;
+  background:transparent;border:1px solid var(--green);color:var(--green);padding:10px 4px;
+}
+.add-input::placeholder{color:var(--green-faint);}
+.add-input:focus{outline:none;}
+
+.sub-steppers{display:flex;flex-direction:column;gap:8px;margin-top:12px;}
+.sub-stepper-row{
+  display:flex;justify-content:space-between;align-items:center;gap:12px;
+  padding:8px 10px;border:1px solid var(--green-faint);
+}
+.sub-stepper-row .sname{font-size:1.05rem;color:var(--green);text-transform:uppercase;letter-spacing:0.02em;}
+
+.row-text{margin-top:12px;}
+.row-text textarea{
+  width:100%;min-height:60px;resize:vertical;font-family:var(--font-body);font-size:1.1rem;
+  padding:8px 10px;border:1px solid var(--green-dim);background:transparent;color:var(--green);
+}
+.row-text textarea::placeholder{color:var(--green-faint);}
+.row-text textarea:focus{outline:none;border-color:var(--green);}
+
+.photo-row{display:flex;align-items:center;gap:12px;margin-top:12px;flex-wrap:wrap;}
+.photo-btn{
+  font-family:var(--font-body);font-size:1.1rem;letter-spacing:0.03em;color:var(--green);
+  background:none;border:1px solid var(--green);padding:9px 16px;cursor:pointer;
+}
+.photo-btn:hover{background:var(--green);color:var(--invert-text);}
+.photo-name{font-size:0.95rem;color:var(--green-dim);}
+
+.legend{
+  display:flex;flex-wrap:wrap;gap:16px;margin-top:20px;font-size:0.95rem;color:var(--green-dim);
+}
+
+/* ---------- Settings + Save ---------- */
+.top-actions{display:flex;justify-content:flex-end;margin-bottom:6px;}
+.bracket-btn{
+  font-family:var(--font-body);font-size:1.05rem;letter-spacing:0.03em;color:var(--green);
+  background:none;border:1px solid var(--green);padding:8px 14px;cursor:pointer;
+}
+.bracket-btn:hover{background:var(--green);color:var(--invert-text);}
+
+.settings{
+  border:1px solid var(--green);padding:16px 18px;margin-bottom:22px;display:none;flex-direction:column;gap:10px;
+}
+.settings.open{display:flex;}
+.settings label{font-size:1.05rem;color:var(--green);}
+.settings input[type="text"]{
+  width:100%;font-family:var(--font-body);font-size:1.1rem;padding:8px 10px;
+  background:transparent;border:1px solid var(--green-dim);color:var(--green);
+}
+.settings input[type="text"]::placeholder{color:var(--green-faint);}
+.settings input[type="text"]:focus{outline:none;border-color:var(--green);}
+.settings .hint{font-size:0.92rem;color:var(--green-dim);line-height:1.4;}
+
+.save-bar{display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:28px;}
+.save-btn{width:100%;max-width:420px;padding:14px;font-size:1.2rem;letter-spacing:0.05em;}
+.save-status{font-size:1rem;color:var(--green-dim);min-height:1.3em;text-align:center;}
+.save-status.err{background:var(--green);color:var(--invert-text);padding:4px 10px;font-weight:700;}
+</style>
+
+<div class="page">
+
+  <div class="boot" id="boot"><span id="bootText"></span><span class="cursor">&nbsp;</span></div>
+
+  <div class="main-content" id="mainContent">
+
+  <div class="hero">
+    <p class="kicker">&gt; layout test // crt skin</p>
+    <h1>DAILY LOG</h1>
+    <p class="sub">Full field set, compact row format, in the chosen colors. Click around.</p>
+  </div>
+
+  <div class="top-actions">
+    <button class="bracket-btn" id="settingsToggle" type="button">[ SETTINGS ]</button>
+  </div>
+
+  <div class="settings" id="settingsPanel">
+    <label for="webAppUrl">&gt; YOUR APPS SCRIPT WEB APP URL</label>
+    <input type="text" id="webAppUrl" placeholder="https://script.google.com/macros/s/…/exec">
+    <p class="hint">Paste the link you get after deploying the script. Saved only in this browser.</p>
+    <button class="bracket-btn" id="saveUrlBtn" type="button">[ SAVE URL ]</button>
+  </div>
+
+  <div class="group-label"><div class="title">Quick fields</div></div>
+  <div class="card" id="blockSimple"></div>
+
+  <div class="group-label"><div class="title">Work Process</div><div class="caption">&gt; READING PRODUCTIVITY DATA...</div></div>
+  <div class="card" id="blockWork"></div>
+
+  <div class="group-label"><div class="title">Knowledge Input</div><div class="caption">&gt; SCANNING TODAY'S READING LOG...</div></div>
+  <div class="card" id="blockReading"></div>
+
+  <div class="group-label"><div class="title">Physical Activity</div><div class="caption">&gt; LOADING MOVEMENT DATA...</div></div>
+  <div class="card" id="blockExercise"></div>
+
+  <div class="group-label"><div class="title">Daily Intake Log</div><div class="caption">&gt; CHECKING CONSUMED ITEMS...</div></div>
+  <div class="card" id="blockMeds"></div>
+
+  <div class="group-label"><div class="title">End of Day Report</div><div class="caption">&gt; PREPARING SESSION FOR ARCHIVE...</div></div>
+  <div class="card" id="blockEnd"></div>
+
+  <div class="legend">
+    <span>□ = not selected</span>
+    <span>■ = selected</span>
+    <span>Mood/Space/Work — pick one</span>
+    <span>Emotions/Reading/Exercise/Meds — pick several</span>
+  </div>
+
+  <div class="save-bar">
+    <button class="bracket-btn save-btn" id="saveBtn" type="button">[ SAVE TODAY'S ENTRY ]</button>
+    <p class="save-status" id="saveStatus"></p>
+  </div>
+
+  </div>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  // ---------- Boot sequence ----------
+  (function boot(){
+    var textEl = document.getElementById("bootText");
+    var content = document.getElementById("mainContent");
+    var d = new Date();
+    var pad = function(n){ return String(n).padStart(2,"0"); };
+    var dateStr = pad(d.getDate())+"."+pad(d.getMonth()+1)+"."+d.getFullYear();
+    var script = "DAILY LOG SYSTEM v1.0\nINITIALIZING NEW SESSION...\n\nDATE: "+dateStr+"\nSTATUS: ONLINE\nUSER: ACTIVE\n\n> Loading memory...\n> Checking system state...\n> Ready for input.\n\n[ BEGIN DAILY LOG ]";
+    var reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    function finish(){
+      content.classList.add("show");
+    }
+    if (reduced){
+      textEl.textContent = script;
+      setTimeout(finish, 300);
+      return;
+    }
+    var i = 0;
+    function tick(){
+      textEl.textContent = script.slice(0, i);
+      i++;
+      if (i <= script.length){
+        setTimeout(tick, 14);
+      } else {
+        setTimeout(finish, 400);
+      }
+    }
+    tick();
+  })();
+
+  // ---------- State + persistence ----------
+  var todayStr = new Date().toISOString().slice(0,10);
+  var STORAGE_KEY = "dailylog_" + todayStr;
+  var URL_KEY = "dailylog_weburl";
+  var LISTS_KEY = "dailylog_customlists";
+
+  var defaultState = {
+    date: todayStr,
+    mood: "", emotions: [],
+    sleepHours: 0, sleepQuality: "",
+    space: "",
+    screenHours: 0,
+    coffee: 0, cigarettes: 0,
+    dreamPick: "", dreamText: "",
+    workHours: 0, workSatisfaction: "",
+    readingMinutes: 0, readingBooks: [],
+    exerciseMinutes: {},
+    meds: [],
+    wisdomText: "",
+    photoData: "", photoName: ""
+  };
+  var state = JSON.parse(JSON.stringify(defaultState));
+  try {
+    var saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) state = Object.assign({}, defaultState, JSON.parse(saved));
+  } catch(e) {}
+
+  function persist(){
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
+  }
+
+  var customLists = { books: [], exercise: [], meds: [] };
+  try {
+    var savedLists = localStorage.getItem(LISTS_KEY);
+    if (savedLists) customLists = Object.assign(customLists, JSON.parse(savedLists));
+  } catch(e) {}
+  function persistLists(){
+    try { localStorage.setItem(LISTS_KEY, JSON.stringify(customLists)); } catch(e) {}
+  }
+  function addToCustomList(key, label){
+    if (customLists[key].indexOf(label) === -1){
+      customLists[key].push(label);
+      persistLists();
+    }
+  }
+
+  // ---------- Settings panel ----------
+  var settingsPanel = document.getElementById("settingsPanel");
+  var urlInput = document.getElementById("webAppUrl");
+  try { urlInput.value = localStorage.getItem(URL_KEY) || ""; } catch(e) {}
+  document.getElementById("settingsToggle").addEventListener("click", function(){
+    settingsPanel.classList.toggle("open");
+  });
+  document.getElementById("saveUrlBtn").addEventListener("click", function(){
+    try { localStorage.setItem(URL_KEY, urlInput.value.trim()); } catch(e) {}
+    settingsPanel.classList.remove("open");
+    setStatus("URL saved.", false);
+  });
+  if (!(function(){ try { return !!localStorage.getItem(URL_KEY); } catch(e){ return false; } })()) {
+    settingsPanel.classList.add("open");
+  }
+
+  function makeRow(name, desc){
+    var row = document.createElement("div");
+    row.className = "row";
+    var head = document.createElement("div");
+    head.className = "row-head";
+    head.innerHTML = "<div class='row-title'>"+(name?"<div class='name'>"+name+"</div>":"")+(desc?"<div class='desc'>"+desc+"</div>":"")+"</div>";
+    row.appendChild(head);
+    row._head = head;
+    return row;
+  }
+
+  function addOptions(row, options, multi, opts){
+    opts = opts || {};
+    var wrap = document.createElement("div");
+    wrap.className = "row-options" + (opts.nowrap ? " nowrap" : "");
+    row.appendChild(wrap);
+
+    function makeOpt(label, onToggle, initialPressed){
+      var opt = document.createElement("button");
+      opt.type = "button";
+      opt.className = "opt";
+      opt.setAttribute("aria-pressed", initialPressed ? "true" : "false");
+      opt.innerHTML = "<span class='box'></span><span class='lbl'>"+label+"</span>";
+      opt.addEventListener("click", function(){
+        if (multi){
+          var now = opt.getAttribute("aria-pressed") === "true";
+          opt.setAttribute("aria-pressed", now ? "false" : "true");
+        } else {
+          wrap.querySelectorAll(".opt").forEach(function(o){ o.setAttribute("aria-pressed","false"); });
+          opt.setAttribute("aria-pressed","true");
+        }
+        if (onToggle) onToggle(opt.getAttribute("aria-pressed") === "true", label);
+      });
+      return opt;
+    }
+
+    options.forEach(function(label){
+      var initialPressed = opts.isPressed ? opts.isPressed(label) : false;
+      wrap.appendChild(makeOpt(label, opts.onToggle, initialPressed));
+    });
+
+    if (opts.addable){
+      var addBtn = document.createElement("button");
+      addBtn.type = "button";
+      addBtn.className = "opt add";
+      addBtn.innerHTML = "<span class='box'></span><span class='lbl'>+ Add</span>";
+      addBtn.addEventListener("click", function(){
+        var input = document.createElement("input");
+        input.className = "add-input";
+        input.placeholder = "Name…";
+        wrap.replaceChild(input, addBtn);
+        input.focus();
+        var done = false;
+        function commit(){
+          if (done) return;
+          done = true;
+          var val = input.value.trim();
+          if (val){
+            var newOpt = makeOpt(val, opts.onToggle);
+            newOpt.setAttribute("aria-pressed","true");
+            wrap.insertBefore(newOpt, input);
+            if (opts.onToggle) opts.onToggle(true, val);
+          }
+          wrap.replaceChild(addBtn, input);
+        }
+        input.addEventListener("keydown", function(e){
+          if (e.key === "Enter") { e.preventDefault(); commit(); }
+          if (e.key === "Escape") { done = true; wrap.replaceChild(addBtn, input); }
+        });
+        input.addEventListener("blur", commit);
+      });
+      wrap.appendChild(addBtn);
+    }
+    return wrap;
+  }
+
+  function addStepper(container, unit, small, onChange, initial){
+    var stepper = document.createElement("div");
+    stepper.className = "stepper" + (small ? " small" : "");
+    var value = initial || 0;
+    var minus = document.createElement("button");
+    minus.type = "button"; minus.textContent = "−";
+    var plus = document.createElement("button");
+    plus.type = "button"; plus.textContent = "+";
+    var val = document.createElement("span");
+    val.className = "value";
+    function render(){ val.innerHTML = value + " <span class='unit'>"+unit+"</span>"; }
+    minus.addEventListener("click", function(){ value = Math.max(0, value - 1); render(); if(onChange) onChange(value); });
+    plus.addEventListener("click", function(){ value = value + 1; render(); if(onChange) onChange(value); });
+    render();
+    stepper.appendChild(minus); stepper.appendChild(val); stepper.appendChild(plus);
+    container.appendChild(stepper);
+    return stepper;
+  }
+
+  function addTextarea(row, placeholder, onInput, initial){
+    var wrap = document.createElement("div");
+    wrap.className = "row-text";
+    var ta = document.createElement("textarea");
+    ta.placeholder = placeholder;
+    if (initial) ta.value = initial;
+    if (onInput) ta.addEventListener("input", function(){ onInput(ta.value); });
+    wrap.appendChild(ta);
+    row.appendChild(wrap);
+    return ta;
+  }
+
+  function addBracketList(row, items, addable, opts){
+    opts = opts || {};
+    var wrap = document.createElement("div");
+    wrap.className = "bracket-list";
+    row.appendChild(wrap);
+
+    function makeItem(label, checked){
+      var item = document.createElement("button");
+      item.type = "button";
+      item.className = "bracket-item";
+      item.setAttribute("aria-pressed", checked ? "true" : "false");
+      function render(){
+        var pressed = item.getAttribute("aria-pressed") === "true";
+        item.innerHTML = "<span class='brk'>["+(pressed?"X":" ")+"]</span> "+label;
+      }
+      render();
+      item.addEventListener("click", function(){
+        var now = item.getAttribute("aria-pressed") === "true";
+        item.setAttribute("aria-pressed", now ? "false" : "true");
+        render();
+        if (opts.onToggle) opts.onToggle(!now, label);
+      });
+      return item;
+    }
+
+    items.forEach(function(label){
+      var initialPressed = opts.isPressed ? opts.isPressed(label) : false;
+      wrap.appendChild(makeItem(label, initialPressed));
+    });
+
+    if (addable){
+      var addBtn = document.createElement("button");
+      addBtn.type = "button";
+      addBtn.className = "bracket-add";
+      addBtn.innerHTML = "<span class='brk'>[</span> + ADD ITEM <span class='brk'>]</span>";
+      addBtn.addEventListener("click", function(){
+        var input = document.createElement("input");
+        input.className = "bracket-add-input";
+        input.placeholder = "Name…";
+        wrap.replaceChild(input, addBtn);
+        input.focus();
+        var done = false;
+        function commit(){
+          if (done) return;
+          done = true;
+          var val = input.value.trim();
+          if (val){
+            wrap.insertBefore(makeItem(val, true), input);
+            if (opts.onToggle) opts.onToggle(true, val);
+          }
+          wrap.replaceChild(addBtn, input);
+        }
+        input.addEventListener("keydown", function(e){
+          if (e.key === "Enter") { e.preventDefault(); commit(); }
+          if (e.key === "Escape") { done = true; wrap.replaceChild(addBtn, input); }
+        });
+        input.addEventListener("blur", commit);
+      });
+      wrap.appendChild(addBtn);
+    }
+    return wrap;
+  }
+
+  function addPhoto(row, onPicked, initialName){
+    var label = document.createElement("div");
+    label.className = "desc";
+    label.style.marginTop = "14px";
+    label.innerHTML = "&gt; ATTACH IMAGE TO TODAY'S ARCHIVE";
+    row.appendChild(label);
+    var wrap = document.createElement("div");
+    wrap.className = "photo-row";
+    var btn = document.createElement("button");
+    btn.type = "button"; btn.className = "photo-btn"; btn.textContent = "+ ATTACH MEMORY";
+    var input = document.createElement("input");
+    input.type = "file"; input.accept = "image/*"; input.style.display = "none";
+    var name = document.createElement("span");
+    name.className = "photo-name";
+    if (initialName) name.textContent = initialName;
+    btn.addEventListener("click", function(){ input.click(); });
+    input.addEventListener("change", function(){
+      var file = input.files[0];
+      if (!file) return;
+      name.textContent = "Reading… " + file.name;
+      var reader = new FileReader();
+      reader.onload = function(){
+        name.textContent = file.name;
+        if (onPicked) onPicked(reader.result, file.name);
+      };
+      reader.readAsDataURL(file);
+    });
+    wrap.appendChild(btn); wrap.appendChild(input); wrap.appendChild(name);
+    row.appendChild(wrap);
+  }
+
+  // ================= SIMPLE FIELDS =================
+  var blockSimple = document.getElementById("blockSimple");
+
+  var r1 = makeRow("Mood Status", "&gt; READING OVERALL DAY STATE...");
+  addOptions(r1, ["Rough","Meh","Okay","Good","Great","Amazing"], false, {nowrap:true,
+    isPressed:function(l){ return state.mood === l; },
+    onToggle:function(pressed,label){ if(pressed){ state.mood = label; persist(); } }
+  });
+  blockSimple.appendChild(r1);
+
+  var r2 = makeRow("Emotional Signals", "&gt; SELECT DETECTED EMOTIONS");
+  addOptions(r2, ["Joy","Calm","Sadness","Anxiety","Anger","Apathy"], true, {nowrap:true,
+    isPressed:function(l){ return state.emotions.indexOf(l) !== -1; },
+    onToggle:function(pressed,label){
+      var i = state.emotions.indexOf(label);
+      if (pressed && i === -1) state.emotions.push(label);
+      if (!pressed && i !== -1) state.emotions.splice(i,1);
+      persist();
+    }
+  });
+  blockSimple.appendChild(r2);
+
+  var r3 = makeRow("System Recovery", "&gt; RECOVERY TIME: " + state.sleepHours + " HRS");
+  var r3Desc = r3._head.querySelector(".desc");
+  var r3QualityLine = document.createElement("div");
+  r3QualityLine.className = "desc";
+  r3QualityLine.innerHTML = "&gt; RECOVERY QUALITY: " + (state.sleepQuality ? state.sleepQuality.toUpperCase() : "—");
+  r3._head.querySelector(".row-title").appendChild(r3QualityLine);
+  addStepper(r3._head, "hrs", false, function(v){ state.sleepHours = v; persist(); r3Desc.innerHTML = "&gt; RECOVERY TIME: " + v + " HRS"; }, state.sleepHours);
+  addOptions(r3, ["Bad","Meh","Okay","Good","Excellent"], false, {nowrap:true,
+    isPressed:function(l){ return state.sleepQuality === l; },
+    onToggle:function(pressed,label){
+      if (pressed){ state.sleepQuality = label; persist(); r3QualityLine.innerHTML = "&gt; RECOVERY QUALITY: " + label.toUpperCase(); }
+    }
+  });
+  blockSimple.appendChild(r3);
+
+  var r4 = makeRow("Environment Status", "&gt; SCANNING CURRENT SURROUNDINGS...");
+  addOptions(r4, ["Chaos","Casual","Clean"], false, {nowrap:true,
+    isPressed:function(l){ return state.space === l; },
+    onToggle:function(pressed,label){ if(pressed){ state.space = label; persist(); } }
+  });
+  blockSimple.appendChild(r4);
+
+  var r5 = makeRow("Screen Activity", "&gt; READING DEVICE USAGE...");
+  addStepper(r5._head, "hrs", false, function(v){ state.screenHours = v; persist(); }, state.screenHours);
+  blockSimple.appendChild(r5);
+
+  var r6 = makeRow("Caffeine Input", "&gt; TRACKING DAILY INTAKE");
+  addStepper(r6._head, "cups", false, function(v){ state.coffee = v; persist(); }, state.coffee);
+  blockSimple.appendChild(r6);
+
+  var r7 = makeRow("Nicotine Input", "&gt; TRACKING DAILY INTAKE");
+  addStepper(r7._head, "pcs", false, function(v){ state.cigarettes = v; persist(); }, state.cigarettes);
+  blockSimple.appendChild(r7);
+
+  var r8 = makeRow("Dream Archive", "&gt; SEARCHING LAST SLEEP SESSION...");
+  addOptions(r8, ["Don't remember","Pleasant","Nightmare","Neutral"], false, {nowrap:true,
+    isPressed:function(l){ return state.dreamPick === l; },
+    onToggle:function(pressed,label){ if(pressed){ state.dreamPick = label; persist(); } }
+  });
+  addTextarea(r8, "Describe the dream, if you'd like (optional)", function(val){ state.dreamText = val; persist(); }, state.dreamText);
+  blockSimple.appendChild(r8);
+
+  // ================= WORK =================
+  var blockWork = document.getElementById("blockWork");
+  var rWork = makeRow("");
+  addStepper(rWork._head, "hrs", false, function(v){ state.workHours = v; persist(); }, state.workHours);
+  addOptions(rWork, ["Bad","Meh","Okay","Good","Great"], false, {nowrap:true,
+    isPressed:function(l){ return state.workSatisfaction === l; },
+    onToggle:function(pressed,label){ if(pressed){ state.workSatisfaction = label; persist(); } }
+  });
+  blockWork.appendChild(rWork);
+
+  // ================= READING =================
+  var blockReading = document.getElementById("blockReading");
+  var rReading = makeRow("");
+  addStepper(rReading._head, "min", false, function(v){ state.readingMinutes = v; persist(); }, state.readingMinutes);
+  var bookOptions = ["Atomic Habits","Dune","1984"];
+  customLists.books.forEach(function(b){ if (bookOptions.indexOf(b) === -1) bookOptions.push(b); });
+  addOptions(rReading, bookOptions, true, {addable:true,
+    isPressed:function(l){ return state.readingBooks.indexOf(l) !== -1; },
+    onToggle:function(pressed,label){
+      addToCustomList("books", label);
+      var i = state.readingBooks.indexOf(label);
+      if (pressed && i === -1) state.readingBooks.push(label);
+      if (!pressed && i !== -1) state.readingBooks.splice(i,1);
+      persist();
+    }
+  });
+  blockReading.appendChild(rReading);
+
+  // ================= EXERCISE =================
+  var blockExercise = document.getElementById("blockExercise");
+  var rExercise = makeRow("");
+  var exerciseSubs = document.createElement("div");
+  exerciseSubs.className = "sub-steppers";
+  var exerciseSubMap = {};
+  function ensureSubStepper(label){
+    if (exerciseSubMap[label]) return;
+    var subRow = document.createElement("div");
+    subRow.className = "sub-stepper-row";
+    var sname = document.createElement("span");
+    sname.className = "sname"; sname.textContent = label;
+    subRow.appendChild(sname);
+    addStepper(subRow, "min", true, function(v){ state.exerciseMinutes[label] = v; persist(); }, state.exerciseMinutes[label] || 0);
+    exerciseSubs.appendChild(subRow);
+    exerciseSubMap[label] = subRow;
+  }
+  var exerciseOptions = ["Stretching","Rollerblading","Strength"];
+  customLists.exercise.forEach(function(x){ if (exerciseOptions.indexOf(x) === -1) exerciseOptions.push(x); });
+  addOptions(rExercise, exerciseOptions, true, {
+    addable:true,
+    isPressed:function(l){ return state.exerciseMinutes.hasOwnProperty(l); },
+    onToggle:function(pressed, label){
+      addToCustomList("exercise", label);
+      if (pressed){
+        if (!state.exerciseMinutes.hasOwnProperty(label)) state.exerciseMinutes[label] = 0;
+        ensureSubStepper(label);
+        persist();
+      } else if (exerciseSubMap[label]){
+        exerciseSubs.removeChild(exerciseSubMap[label]);
+        delete exerciseSubMap[label];
+        delete state.exerciseMinutes[label];
+        persist();
+      }
+    }
+  });
+  Object.keys(state.exerciseMinutes).forEach(ensureSubStepper);
+  rExercise.appendChild(exerciseSubs);
+  blockExercise.appendChild(rExercise);
+
+  // ================= MEDICATIONS =================
+  var blockMeds = document.getElementById("blockMeds");
+  var rMeds = makeRow("", "&gt; REGISTERED TODAY:");
+  var medOptions = ["Vitamin D","Magnesium","Omega-3"];
+  customLists.meds.forEach(function(m){ if (medOptions.indexOf(m) === -1) medOptions.push(m); });
+  addBracketList(rMeds, medOptions, true, {
+    isPressed:function(l){ return state.meds.indexOf(l) !== -1; },
+    onToggle:function(pressed,label){
+      addToCustomList("meds", label);
+      var i = state.meds.indexOf(label);
+      if (pressed && i === -1) state.meds.push(label);
+      if (!pressed && i !== -1) state.meds.splice(i,1);
+      persist();
+    }
+  });
+  blockMeds.appendChild(rMeds);
+
+  // ================= END OF DAY =================
+  var blockEnd = document.getElementById("blockEnd");
+  var rEnd = makeRow("Memory to Keep", "&gt; WRITE DATA WORTH PRESERVING");
+  addTextarea(rEnd, "What do you want to remember about today?", function(val){ state.wisdomText = val; persist(); }, state.wisdomText);
+  addPhoto(rEnd, function(dataUrl, fileName){
+    state.photoData = dataUrl; state.photoName = fileName; persist();
+  }, state.photoName);
+  blockEnd.appendChild(rEnd);
+
+  // ---------- Save to Google Sheet ----------
+  var saveStatus = document.getElementById("saveStatus");
+  function setStatus(text, isErr){
+    saveStatus.textContent = text;
+    saveStatus.classList.toggle("err", !!isErr);
+  }
+  document.getElementById("saveBtn").addEventListener("click", function(){
+    var webAppUrl = "";
+    try { webAppUrl = localStorage.getItem(URL_KEY) || ""; } catch(e) {}
+    if (!webAppUrl) {
+      settingsPanel.classList.add("open");
+      setStatus("Add your Web App URL in settings first.", true);
+      return;
+    }
+    setStatus("Saving…", false);
+    fetch(webAppUrl, {
+      method: "POST",
+      mode: "no-cors",
+      body: JSON.stringify(state)
+    }).then(function(){
+      var now = new Date();
+      setStatus("Saved at " + now.toLocaleTimeString("en-US", {hour:"2-digit", minute:"2-digit"}) + ".", false);
+    }).catch(function(){
+      setStatus("Couldn't send. This preview sandbox can't reach Google — host the page (e.g. GitHub Pages) to save for real.", true);
+    });
+  });
+
+})();
+</script>
