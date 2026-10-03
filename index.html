@@ -1,477 +1,272 @@
-<title>Compact Rows — CRT Skin</title>
+<!doctype html>
+<html lang="en">
+<head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#2b2f3a">
+<title>Daily Log</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=VT323&display=swap">
 <style>
 :root{
-  --bg:#020402;
-  --green:#c6ff3d;
-  --green-mid:#8bb32b;
-  --green-dim:#536b1a;
-  --green-faint:#242e0b;
-  --invert-text:#0a0c02;
-  --white:#ffffff;
-  --btn-shadow:3px 3px 0 var(--green-faint);
-  --btn-shadow-active:1px 1px 0 var(--green-faint);
-  --font-title:'Press Start 2P',ui-monospace,monospace;
-  --font-body:'VT323',ui-monospace,'SFMono-Regular',monospace;
+  --cream:#e8e4cf;
+  --ink:#2b2f3a;
+  --ink-soft:#4a4f5e;
+  --font-title:'Silkscreen',ui-monospace,monospace;
+  --font-body:'VT323',ui-monospace,monospace;
+  --dither:conic-gradient(var(--ink) 25%,transparent 0 50%,var(--ink) 0 75%,transparent 0) 0 0/4px 4px;
+  --paper-dots:conic-gradient(rgba(43,47,58,.07) 25%,transparent 0 50%,rgba(43,47,58,.07) 0 75%,transparent 0) 0 0/4px 4px;
+  --rule:rgba(43,47,58,.35);
 }
 *{box-sizing:border-box;}
-html{background:var(--bg);}
+html{background:var(--ink);}
 body{
-  color:var(--green);
-  background:
-    repeating-linear-gradient(0deg, rgba(198,255,61,0.035) 0px, rgba(198,255,61,0.035) 1px, transparent 1px, transparent 3px),
-    var(--bg);
-  font-family:var(--font-body);
+  margin:0;padding:14px 10px 60px;font-family:var(--font-body);font-size:1.2rem;color:var(--ink);
+  background:conic-gradient(rgba(232,228,207,0.07) 25%,transparent 0 50%,rgba(232,228,207,0.07) 0 75%,transparent 0) 0 0/4px 4px,var(--ink);
 }
-::selection{background:var(--green);color:var(--invert-text);}
-button{font:inherit;}
-.page{max-width:680px;margin:0 auto;padding:clamp(20px,5vw,32px) clamp(14px,3vw,22px) 60px;}
+button,input,textarea{font:inherit;}
+::selection{background:var(--ink);color:var(--cream);}
 
-.globe-row{display:flex;align-items:stretch;gap:12px;margin:2px 0 16px;}
-.globe-deco{
-  width:110px;height:110px;flex:none;border:2px solid var(--green-dim);
-  display:flex;align-items:center;justify-content:center;
-  background:linear-gradient(155deg,rgba(198,255,61,0.06),rgba(0,0,0,0.3));
-  perspective:320px;
-}
-.scope-deco{
-  flex:1;min-width:0;height:110px;overflow:hidden;border:2px solid var(--green-dim);
-  position:relative;
-  background:
-    repeating-linear-gradient(90deg,rgba(198,255,61,0.16) 0,rgba(198,255,61,0.16) 1px,transparent 1px,transparent 18px),
-    repeating-linear-gradient(0deg,rgba(198,255,61,0.16) 0,rgba(198,255,61,0.16) 1px,transparent 1px,transparent 18px),
-    linear-gradient(155deg,rgba(198,255,61,0.06),rgba(0,0,0,0.3));
-  display:flex;align-items:center;
-}
-.scope-deco svg{
-  display:block;width:200%;height:70%;flex:none;
-  fill:none;stroke:var(--green);stroke-width:0.9;stroke-linejoin:round;stroke-linecap:round;
-  filter:drop-shadow(0 0 3px rgba(198,255,61,0.6));
-  animation:scopeScroll 4s linear infinite,tickShimmer 2.4s linear infinite;
-}
-@keyframes scopeScroll{
-  from{transform:translateX(0);}
-  to{transform:translateX(-50%);}
-}
-.scope-hud{
-  position:absolute;top:6px;right:8px;text-align:right;
-  font-family:var(--font-body);font-size:0.85rem;line-height:1.35;
-  letter-spacing:0.04em;color:var(--green-mid);pointer-events:none;
-}
-.scope-hud .hud-static{color:var(--green-dim);display:block;}
-.scope-hud .hud-blink{display:block;animation:hudBlink 1.3s steps(1) infinite;}
-.scope-hud .hud-cycle{position:relative;display:inline-block;width:2.2ch;height:1.35em;vertical-align:top;}
-.scope-hud .hud-cycle span{position:absolute;top:0;right:0;opacity:0;animation:hudCycle 3s steps(1) infinite;}
-.scope-hud .hud-cycle span:nth-child(1){animation-delay:0s;}
-.scope-hud .hud-cycle span:nth-child(2){animation-delay:-2s;}
-.scope-hud .hud-cycle span:nth-child(3){animation-delay:-1s;}
-@keyframes hudBlink{0%,49%{opacity:1;}50%,100%{opacity:0;}}
-@keyframes hudCycle{0%,32%{opacity:1;}33%,100%{opacity:0;}}
-.globe-tilt{
-  width:80px;height:80px;position:relative;
-  transform-style:preserve-3d;transform:rotateX(-18deg);
-}
-.globe-spin{
-  width:80px;height:80px;position:relative;
-  transform-style:preserve-3d;
-  animation:globeAxisSpin 9s linear infinite;
-}
-.globe-spin .ring{
-  position:absolute;top:50%;left:50%;border-radius:50%;
-  border:1px solid var(--green-mid);
-}
-.globe-spin .ring.equator{border-color:var(--green);}
-.globe-spin .lon{width:80px;height:80px;margin:-40px 0 0 -40px;}
-.globe-spin .lon.l1{transform:rotateY(0deg);}
-.globe-spin .lon.l2{transform:rotateY(30deg);}
-.globe-spin .lon.l3{transform:rotateY(60deg);}
-.globe-spin .lon.l4{transform:rotateY(90deg);}
-.globe-spin .lon.l5{transform:rotateY(120deg);}
-.globe-spin .lon.l6{transform:rotateY(150deg);}
-.globe-spin .lat.t1{width:40px;height:40px;margin:-20px 0 0 -20px;transform:rotateX(90deg) translateZ(34.6px);}
-.globe-spin .lat.t2{width:69.2px;height:69.2px;margin:-34.6px 0 0 -34.6px;transform:rotateX(90deg) translateZ(20px);}
-.globe-spin .lat.t3{width:80px;height:80px;margin:-40px 0 0 -40px;transform:rotateX(90deg) translateZ(0px);}
-.globe-spin .lat.t4{width:69.2px;height:69.2px;margin:-34.6px 0 0 -34.6px;transform:rotateX(90deg) translateZ(-20px);}
-.globe-spin .lat.t5{width:40px;height:40px;margin:-20px 0 0 -20px;transform:rotateX(90deg) translateZ(-34.6px);}
-@keyframes globeAxisSpin{
-  from{transform:rotateY(0deg);}
-  to{transform:rotateY(360deg);}
-}
-h1{margin:0;}
-p{margin:0;}
-
-.hero{margin-bottom:22px;}
-.hero .kicker{font-size:1rem;letter-spacing:0.05em;text-transform:uppercase;color:var(--green-dim);}
-.hero h1{
-  font-family:var(--font-title);font-size:clamp(1.3rem,5vw,1.8rem);color:var(--white);
-  margin-top:8px;line-height:1.4;
-}
-.hero p.sub{color:var(--green-dim);font-size:1.1rem;margin-top:10px;line-height:1.5;max-width:56ch;}
-
-.date-field{position:relative;display:flex;align-items:center;gap:10px;margin-top:16px;flex-wrap:wrap;}
-.date-field .date-label{font-size:0.95rem;color:var(--green-dim);letter-spacing:0.03em;text-transform:uppercase;}
-.date-display{
-  font-family:var(--font-body);font-size:1.15rem;color:var(--green);letter-spacing:0.02em;
-  background:transparent;border:1px solid var(--green-dim);padding:6px 12px;cursor:pointer;
-}
-.date-display:hover, .date-display:focus{outline:none;border-color:var(--green);}
-.date-display .today-flag{color:var(--green-dim);font-size:0.85rem;margin-left:6px;}
-
-.cal-popup{
-  display:none;position:absolute;top:calc(100% + 8px);left:0;z-index:30;
-  background:var(--bg);border:2px solid var(--green);padding:10px;min-width:210px;
-  box-shadow:4px 4px 0 var(--green-faint);
-}
-.cal-popup.open{display:block;}
-.cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;gap:8px;}
-.cal-nav{
-  width:24px;height:24px;background:none;border:1px solid var(--green-dim);color:var(--green);
-  cursor:pointer;font-size:1rem;line-height:1;flex:none;
-}
-.cal-nav:hover{border-color:var(--green);}
-.cal-title{font-size:0.95rem;color:var(--white);letter-spacing:0.05em;text-transform:uppercase;}
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;}
-.cal-dow{font-size:0.68rem;color:var(--green-dim);text-align:center;padding:2px 0;}
-.cal-day{
-  font-family:var(--font-body);font-size:0.95rem;color:var(--green-dim);
-  background:none;border:1px solid transparent;cursor:pointer;padding:5px 0;text-align:center;
-}
-.cal-day:hover{border-color:var(--green-dim);color:var(--green);}
-.cal-day.today{color:var(--white);}
-.cal-day.selected{background:var(--green);color:var(--invert-text);border-color:var(--green);}
-.cal-day.disabled{color:var(--green-faint);cursor:default;}
-.cal-day.other-month{visibility:hidden;cursor:default;}
-
-.group-label{
-  margin:30px 0 10px;padding-bottom:6px;border-bottom:1px dashed var(--green-faint);
-}
-.group-label:first-of-type{margin-top:0;}
-.group-label .title{
-  font-size:1.15rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--white);
-  font-weight:normal;
-}
-.group-label .caption{
-  font-size:0.9rem;color:var(--green-dim);margin-top:2px;letter-spacing:0.02em;
-}
-
-/* ---------- Boot sequence ---------- */
-.boot{
-  color:var(--green);font-family:var(--font-body);font-size:1.1rem;line-height:1.5;
-  white-space:pre-wrap;margin-bottom:28px;
-}
-.boot .cursor{display:inline-block;width:0.55em;background:var(--green);animation:blink 1s step-end infinite;}
+/* ---------- boot overlay ---------- */
+.boot{position:fixed;inset:0;z-index:50;background:var(--ink);color:var(--cream);padding:24px 18px;font-size:1.2rem;line-height:1.45;white-space:pre-wrap;transition:opacity .5s;}
+.boot.done{opacity:0;pointer-events:none;}
+.boot .cursor{display:inline-block;width:.55em;background:var(--cream);animation:blink 1s step-end infinite;}
 @keyframes blink{50%{opacity:0;}}
-@media (prefers-reduced-motion: reduce){
-  .boot .cursor{animation:none;}
-}
 
-.main-content{opacity:0;transition:opacity .6s ease;}
-.main-content.show{opacity:1;}
-@media (prefers-reduced-motion: reduce){
-  .main-content{transition:none;}
-}
+.desktop{max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:16px;}
 
-/* ---------- Bracket checklist ---------- */
-.bracket-list{display:flex;flex-direction:column;gap:8px;margin-top:12px;}
-.bracket-item{
-  display:flex;align-items:center;gap:10px;cursor:pointer;background:none;border:none;
-  font-family:var(--font-body);font-size:1.15rem;color:var(--green-dim);text-align:left;
-  padding:4px 2px;text-transform:uppercase;letter-spacing:0.02em;
-}
-.bracket-item .brk{color:var(--green);flex:none;}
-.bracket-item[aria-pressed="true"]{color:var(--green);}
-.bracket-item:hover{color:var(--green);}
-.bracket-add{
-  display:flex;align-items:center;gap:10px;background:none;border:none;cursor:pointer;
-  font-family:var(--font-body);font-size:1.15rem;color:var(--green-dim);text-align:left;padding:4px 2px;
-}
-.bracket-add:hover{color:var(--green);}
-.bracket-add-input{
-  font-family:var(--font-body);font-size:1.15rem;background:transparent;border:none;border-bottom:1px solid var(--green-dim);
-  color:var(--green);padding:4px 2px;flex:1;min-width:0;
-}
-.bracket-add-input:focus{outline:none;border-color:var(--green);}
+/* ---------- window ---------- */
+.win{background:var(--cream);border:3px solid var(--ink);box-shadow:0 0 0 3px var(--cream),5px 5px 0 3px var(--cream);}
+.win > summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:8px;padding:6px 8px;user-select:none;}
+.win > summary::-webkit-details-marker{display:none;}
+.win[open] > summary{border-bottom:3px solid var(--ink);}
+.win .title{font-family:var(--font-title);font-weight:700;font-size:.95rem;letter-spacing:.06em;text-transform:uppercase;flex:none;}
+.win .dither{flex:1;height:14px;background:var(--dither);border:2px solid var(--ink);min-width:16px;}
+.win .toggle{width:24px;height:24px;border:3px solid var(--ink);flex:none;position:relative;background:var(--cream);}
+.win .toggle::after{content:"";position:absolute;left:50%;top:50%;margin:-4px 0 0 -6px;border-left:6px solid transparent;border-right:6px solid transparent;border-top:8px solid var(--ink);}
+.win[open] .toggle::after{border-top:0;border-bottom:8px solid var(--ink);}
+.win .body{padding:10px 10px 12px;display:flex;flex-direction:column;}
 
-.bracket-list-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:2px;}
-.list-edit-btn{
-  font-family:var(--font-body);font-size:0.85rem;letter-spacing:0.03em;color:var(--green-dim);
-  background:none;border:2px solid var(--green-dim);padding:4px 10px;cursor:pointer;
-  box-shadow:var(--btn-shadow);transition:box-shadow .08s,transform .08s;
+/* ---------- dark screens: globe + info ---------- */
+.sys-row{display:flex;gap:8px;height:84px;}
+.screen{background:var(--ink);border:3px solid var(--ink);position:relative;overflow:hidden;}
+.globe{width:84px;flex:none;display:flex;align-items:center;justify-content:center;perspective:260px;}
+.g-tilt{width:56px;height:56px;position:relative;transform-style:preserve-3d;transform:rotateX(-18deg);}
+.g-spin{width:56px;height:56px;position:relative;transform-style:preserve-3d;animation:gspin 9s linear infinite;}
+@keyframes gspin{to{transform:rotateY(360deg);}}
+.g-spin .ring{position:absolute;top:50%;left:50%;border-radius:50%;border:1px solid rgba(232,228,207,.7);}
+.g-spin .ring.eq{border-color:var(--cream);}
+.g-spin .lon{width:56px;height:56px;margin:-28px 0 0 -28px;}
+.g-spin .l1{transform:rotateY(0deg);}.g-spin .l2{transform:rotateY(30deg);}.g-spin .l3{transform:rotateY(60deg);}
+.g-spin .l4{transform:rotateY(90deg);}.g-spin .l5{transform:rotateY(120deg);}.g-spin .l6{transform:rotateY(150deg);}
+.g-spin .t1{width:28px;height:28px;margin:-14px 0 0 -14px;transform:rotateX(90deg) translateZ(24.2px);}
+.g-spin .t2{width:48.4px;height:48.4px;margin:-24.2px 0 0 -24.2px;transform:rotateX(90deg) translateZ(14px);}
+.g-spin .t3{width:56px;height:56px;margin:-28px 0 0 -28px;transform:rotateX(90deg);}
+.g-spin .t4{width:48.4px;height:48.4px;margin:-24.2px 0 0 -24.2px;transform:rotateX(90deg) translateZ(-14px);}
+.g-spin .t5{width:28px;height:28px;margin:-14px 0 0 -14px;transform:rotateX(90deg) translateZ(-24.2px);}
+.info{
+  flex:1;min-width:0;padding:6px 10px;display:flex;flex-direction:column;justify-content:space-between;
+  color:var(--cream);font-size:1rem;line-height:1.1;letter-spacing:.04em;
+  background:repeating-linear-gradient(0deg,rgba(232,228,207,.05) 0,rgba(232,228,207,.05) 1px,transparent 1px,transparent 3px),var(--ink);
 }
-.list-edit-btn:active{box-shadow:var(--btn-shadow-active);transform:translate(2px,2px);}
-.list-edit-btn:hover{border-color:var(--green);color:var(--green);}
-.list-edit-btn.active{border-color:var(--green);color:var(--green);}
-.bracket-list.edit-mode .bracket-item{border:1px dashed var(--green-dim);padding:4px 8px;}
-.bracket-list.edit-mode .bracket-item:hover{border-color:var(--green);color:var(--green);}
+.irow{display:flex;justify-content:space-between;align-items:center;gap:8px;}
+.ik{opacity:.55;}
+.iv{text-align:right;white-space:nowrap;}
+.bar{display:inline-flex;gap:2px;margin-left:6px;vertical-align:middle;}
+.bar i{display:block;width:6px;height:10px;border:1px solid var(--cream);}
+.bar i.on{background:var(--cream);}
+.live{display:inline-block;width:.5em;height:.8em;background:var(--cream);margin-left:5px;vertical-align:-1px;animation:blink 1s step-end infinite;}
 
-.card{
-  border:1px solid var(--green-mid);padding:6px 18px;position:relative;
-  background-repeat:no-repeat;
-  background-image:
-    linear-gradient(var(--green),var(--green)),linear-gradient(var(--green),var(--green)),
-    linear-gradient(var(--green),var(--green)),linear-gradient(var(--green),var(--green)),
-    linear-gradient(var(--green),var(--green)),linear-gradient(var(--green),var(--green)),
-    linear-gradient(var(--green),var(--green)),linear-gradient(var(--green),var(--green));
-  background-size:
-    2px 14px,14px 2px, 2px 14px,14px 2px,
-    2px 14px,14px 2px, 2px 14px,14px 2px;
-  background-position:
-    top left,top left, top right,top right,
-    bottom left,bottom left, bottom right,bottom right;
-}
+/* date + calendar */
+.date-line{position:relative;display:flex;align-items:center;gap:8px;margin-top:8px;font-size:1rem;letter-spacing:.04em;flex-wrap:wrap;}
+.date-line .lbl{color:var(--ink-soft);text-transform:uppercase;}
+.date-line .val{border:2px solid var(--ink);padding:2px 8px;box-shadow:2px 2px 0 var(--ink);cursor:pointer;background:var(--cream);color:var(--ink);}
+.date-line .val:active{transform:translate(2px,2px);box-shadow:none;}
+.today-flag{color:var(--ink-soft);margin-left:6px;font-size:.85rem;}
+.cal-popup{display:none;position:absolute;top:calc(100% + 6px);left:0;z-index:30;width:250px;background:var(--cream);border:3px solid var(--ink);box-shadow:4px 4px 0 var(--ink);padding:8px;}
+.cal-popup.open{display:block;}
+.cal-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;}
+.cal-nav{width:26px;height:26px;border:2px solid var(--ink);background:var(--cream);color:var(--ink);box-shadow:2px 2px 0 var(--ink);cursor:pointer;padding:0;line-height:1;font-size:1.2rem;}
+.cal-nav:active{transform:translate(2px,2px);box-shadow:none;}
+.cal-title{font-family:var(--font-title);font-size:.7rem;letter-spacing:.08em;}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
+.cal-dow{text-align:center;font-size:.85rem;color:var(--ink-soft);}
+.cal-day{height:28px;border:2px solid var(--ink);background:var(--cream);color:var(--ink);cursor:pointer;padding:0;font-size:1.05rem;}
+.cal-day.other-month{border-color:transparent;background:none;cursor:default;}
+.cal-day.today{border-style:dashed;}
+.cal-day.selected{background:var(--ink);color:var(--cream);}
+.cal-day.disabled{opacity:.3;cursor:default;}
 
-.row{padding:16px 0;border-bottom:1px solid var(--green-faint);}
-.row:last-child{border-bottom:none;}
-.row-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap;}
-.row-title .name{font-size:1.2rem;color:var(--green);letter-spacing:0.02em;}
-.row-title .desc{font-size:0.92rem;color:var(--green-dim);margin-top:2px;line-height:1.3;}
+/* ---------- field row: label + scale/stepper ---------- */
+.field{padding:8px 0;border-bottom:2px dashed var(--rule);display:flex;flex-direction:column;gap:6px;}
+.field:first-child{padding-top:0;}
+.field:last-child{border-bottom:0;padding-bottom:0;}
+.f-head{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:28px;}
+.f-label{font-family:var(--font-title);font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;}
+.k{font-size:.95rem;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.04em;}
+.sep{border-top:2px dashed var(--rule);}
 
-.stepper{display:flex;align-items:center;gap:12px;flex:none;}
-.stepper button{
-  width:32px;height:32px;background:none;color:var(--green);font-size:1.15rem;cursor:pointer;
-  border:2px solid var(--green);line-height:1;
-  box-shadow:2px 2px 0 var(--green-faint);transition:box-shadow .08s,transform .08s;
-}
-.stepper button:active{box-shadow:0 0 0 var(--green-faint);transform:translate(2px,2px);}
-.stepper button:hover{background:var(--green);color:var(--invert-text);}
-.stepper .value{font-size:1.15rem;min-width:52px;text-align:center;color:var(--green);cursor:pointer;border-bottom:1px dashed var(--green-faint);}
-.stepper .value:hover{border-color:var(--green);}
-.stepper .unit{font-size:0.9rem;color:var(--green-dim);}
-.stepper.small button{width:26px;height:26px;font-size:1rem;}
-.stepper.small .value{font-size:1rem;min-width:44px;}
-.value-input{
-  font-family:var(--font-body);font-size:1.15rem;min-width:52px;max-width:70px;text-align:center;
-  background:transparent;border:none;border-bottom:1px solid var(--green);color:var(--green);
-}
-.value-input:focus{outline:none;}
-.stepper.small .value-input{font-size:1rem;min-width:44px;}
+.scale{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:3px 5px;}
+.scale .cap{font-size:.74rem;line-height:1;letter-spacing:0;text-transform:uppercase;color:var(--ink-soft);text-align:center;white-space:nowrap;}
+.scale .b{position:relative;display:block;min-width:0;}
+.scale .b input{position:absolute;opacity:0;pointer-events:none;}
+.scale .b span{display:block;height:30px;line-height:25px;text-align:center;border:2px solid var(--ink);background:var(--cream);box-shadow:2px 2px 0 var(--ink);font-size:1.15rem;cursor:pointer;transition:transform .06s,box-shadow .06s;}
+.scale .b span:active{transform:translate(2px,2px);box-shadow:0 0 0 var(--ink);}
+.scale .b input:checked + span{background:var(--ink);color:var(--cream);}
+.scale .b input:focus-visible + span{outline:3px dashed var(--ink);outline-offset:2px;}
 
-.row-options{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;}
-.row-options.nowrap{flex-wrap:nowrap;}
-.opt{
-  flex:0 0 calc((100% - 40px) / 6);min-width:0;display:flex;flex-direction:column;align-items:center;gap:6px;
-  padding:10px 4px;border:2px solid var(--green-dim);cursor:pointer;
-  background:linear-gradient(155deg,rgba(198,255,61,0.10),rgba(0,0,0,0.35));
-  box-shadow:2px 2px 0 var(--green-faint),inset 1px 1px 2px rgba(198,255,61,0.25),inset -2px -2px 5px rgba(0,0,0,0.55);
-  transition:box-shadow .08s,transform .08s;
-}
-.opt:active{
-  box-shadow:0 0 0 var(--green-faint),inset -1px -1px 2px rgba(198,255,61,0.15),inset 2px 2px 5px rgba(0,0,0,0.6);
-  transform:translate(2px,2px);
-}
-.opt[aria-pressed="true"]{box-shadow:2px 2px 0 var(--green-dim),inset 1px 1px 3px rgba(198,255,61,0.4),inset -2px -2px 6px rgba(0,0,0,0.4);}
-.opt:hover{border-color:var(--green);}
-.opt .box{
-  width:15px;height:15px;border:1.5px solid var(--green);position:relative;flex:none;
-  background:radial-gradient(circle at 35% 30%,rgba(198,255,61,0.35),rgba(0,0,0,0.3));
-  box-shadow:inset 1px 1px 2px rgba(0,0,0,0.5);
-}
-.opt .box::after{content:"";position:absolute;inset:3px;background:transparent;}
-.opt[aria-pressed="true"]{border-color:var(--green);background:linear-gradient(155deg,rgba(198,255,61,0.22),rgba(0,0,0,0.3));}
-.opt[aria-pressed="true"] .box::after{background:var(--green);}
-.opt .lbl{
-  font-size:0.92rem;color:var(--green-dim);letter-spacing:0.01em;text-align:center;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;text-transform:uppercase;
-}
-.opt[aria-pressed="true"] .lbl{color:var(--green);}
-.opt.add{border-style:dashed;color:var(--green-dim);}
-.opt.add .lbl{color:var(--green-dim);}
-.opt.add:hover{border-color:var(--green);}
-.opt.add:hover .lbl{color:var(--green);}
+/* ---------- steppers + inputs ---------- */
+.stepper{display:inline-flex;align-items:center;gap:6px;}
+.stepper button{width:26px;height:26px;border:2px solid var(--ink);background:var(--cream);box-shadow:2px 2px 0 var(--ink);cursor:pointer;font-size:1.2rem;line-height:1;padding:0;color:var(--ink);}
+.stepper button:active{transform:translate(2px,2px);box-shadow:none;}
+.stepper .v{min-width:3.4ch;text-align:center;font-size:1.15rem;}
+.stepper .u{font-size:.85rem;color:var(--ink-soft);text-transform:uppercase;}
+.num,.txt,textarea{font-family:var(--font-body);font-size:1.1rem;color:var(--ink);border:2px solid var(--ink);border-radius:0;background:var(--paper-dots),var(--cream);padding:3px 7px;}
+.num{width:7.5ch;text-align:center;}
+.txt{width:100%;}
+textarea{display:block;width:100%;resize:vertical;min-height:44px;padding:5px 8px;}
+.num::placeholder,.txt::placeholder,textarea::placeholder{color:var(--ink-soft);opacity:.7;}
+.num:focus,.txt:focus,textarea:focus{outline:3px dashed var(--ink);outline-offset:2px;}
 
-.add-input{
-  flex:1;min-width:0;font-family:var(--font-body);font-size:1rem;text-align:center;
-  background:transparent;border:1px solid var(--green);color:var(--green);padding:10px 4px;
-}
-.add-input::placeholder{color:var(--green-faint);}
-.add-input:focus{outline:none;}
+/* ---------- "+" habit row ---------- */
+.habit{border-bottom:2px dashed var(--rule);}
+.habit:last-child{border-bottom:0;}
+.habit > input{position:absolute;opacity:0;pointer-events:none;}
+.hrow{display:flex;align-items:center;gap:10px;padding:7px 0;cursor:pointer;user-select:none;}
+.plus{width:26px;height:26px;border:3px solid var(--ink);background:var(--cream);box-shadow:2px 2px 0 var(--ink);position:relative;flex:none;transition:background .1s;}
+.plus::before,.plus::after{content:"";position:absolute;left:50%;top:50%;background:var(--ink);transition:background .1s,transform .15s;}
+.plus::before{width:12px;height:3px;margin:-1.5px 0 0 -6px;}
+.plus::after{width:3px;height:12px;margin:-6px 0 0 -1.5px;}
+.hname{font-family:var(--font-title);font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;flex:1;}
+.hsum{font-size:1.05rem;color:var(--ink-soft);text-transform:uppercase;}
+.habit > input:checked + .hrow .plus{background:var(--ink);}
+.habit > input:checked + .hrow .plus::before,.habit > input:checked + .hrow .plus::after{background:var(--cream);transform:rotate(45deg);}
+.habit > input:checked + .hrow .hsum{color:var(--ink);}
+.habit > input:focus-visible + .hrow .plus{outline:3px dashed var(--ink);outline-offset:2px;}
+.panel{display:grid;grid-template-rows:0fr;transition:grid-template-rows .22s ease;}
+.panel > div{overflow:hidden;min-height:0;}
+.habit > input:checked ~ .panel{grid-template-rows:1fr;}
+.panel .inner{margin:0 0 9px 36px;padding:8px 10px;border:2px solid var(--ink);background:var(--paper-dots);display:flex;flex-direction:column;gap:9px;}
+.row{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:28px;}
 
-.sub-steppers{display:flex;flex-direction:column;gap:8px;margin-top:12px;}
-.sub-stepper-row{
-  display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;
-  padding:8px 10px;border:1px solid var(--green-faint);
-}
-.sub-stepper-row .scale-row{flex-basis:100%;margin-top:0;}
-.sub-stepper-row .sname{font-size:1.05rem;color:var(--green);text-transform:uppercase;letter-spacing:0.02em;}
+/* column lists (books, exercise, medication) */
+.list{display:flex;flex-direction:column;}
+.li{position:relative;border-bottom:2px dashed rgba(43,47,58,.25);}
+.li:last-child{border-bottom:0;}
+.li > input{position:absolute;opacity:0;pointer-events:none;}
+.li > label{display:flex;align-items:center;gap:9px;padding:6px 0;cursor:pointer;text-transform:uppercase;letter-spacing:.03em;padding-right:30px;}
+.cb{width:18px;height:18px;border:2px solid var(--ink);background:var(--cream);box-shadow:2px 2px 0 var(--ink);position:relative;flex:none;}
+.li > input:checked + label .cb{background:var(--ink);}
+.li > input:checked + label .cb::after{content:"";position:absolute;left:4px;top:0;width:5px;height:10px;border:solid var(--cream);border-width:0 2px 2px 0;transform:rotate(45deg);}
+.li > input:focus-visible + label .cb{outline:3px dashed var(--ink);outline-offset:2px;}
+.li .det{display:none;flex-direction:column;gap:6px;padding:2px 0 9px 27px;}
+.li > input:checked ~ .det{display:flex;}
+.rm{display:none;position:absolute;top:4px;right:0;width:24px;height:24px;border:2px solid var(--ink);background:var(--cream);color:var(--ink);cursor:pointer;padding:0;line-height:1;font-size:1.1rem;}
+.editing .rm{display:block;}
+.addrow{display:flex;gap:8px;margin-top:12px;}
+.addbtn{flex:1;padding:6px;border:2px dashed var(--ink);background:transparent;color:var(--ink);text-transform:uppercase;letter-spacing:.05em;font-size:1.05rem;cursor:pointer;}
+.addbtn.small{flex:none;padding:6px 12px;border-style:solid;}
+.addbtn:active{background:var(--ink);color:var(--cream);}
 
-.row-text{margin-top:12px;}
-.row-text textarea{
-  width:100%;min-height:60px;resize:vertical;font-family:var(--font-body);font-size:1.1rem;
-  padding:8px 10px;border:1px solid var(--green-dim);background:transparent;color:var(--green);
-}
-.row-text textarea::placeholder{color:var(--green-faint);}
-.row-text textarea:focus{outline:none;border-color:var(--green);}
+/* photos */
+.photos{display:flex;gap:8px;}
+.slot{position:relative;width:62px;height:62px;border:2px dashed var(--ink);display:grid;place-items:center;font-size:1.8rem;cursor:pointer;background:var(--paper-dots);overflow:hidden;}
+.slot:has(img){border-style:solid;}
+.slot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+.slot .rm{display:block;top:0;right:0;width:20px;height:20px;font-size:.95rem;}
+.slot:active{background:var(--ink);color:var(--cream);}
 
-.photo-row{display:flex;align-items:center;gap:12px;margin-top:12px;flex-wrap:wrap;}
-.photo-btn{
-  font-family:var(--font-body);font-size:1.1rem;letter-spacing:0.03em;color:var(--green);
-  background:none;border:2px solid var(--green);padding:9px 16px;cursor:pointer;
-  box-shadow:var(--btn-shadow);transition:box-shadow .08s,transform .08s;
-}
-.photo-btn:active{box-shadow:var(--btn-shadow-active);transform:translate(2px,2px);}
-.photo-btn:hover{background:var(--green);color:var(--invert-text);}
-.photo-name{font-size:0.95rem;color:var(--green-dim);}
-.scale-row{display:flex;gap:4px;flex-wrap:wrap;margin-top:12px;}
-.scale-tick{width:10px;height:18px;border:1px solid var(--green-dim);background:transparent;flex:none;}
-.scale-row.lg{flex-wrap:nowrap;gap:3px;position:relative;}
-.scale-row.lg .scale-tick{flex:1 1 0;width:auto;height:38px;}
-.scale-row.lg .scale-runner{
-  position:absolute;top:0;left:0;width:10%;height:38px;
-  background:var(--green);box-shadow:0 0 10px 1px var(--green);
-  animation:scaleRunnerMove 3.2s ease-in-out infinite,tickShimmer 2.4s linear infinite;
-}
-@keyframes scaleRunnerMove{
-  0%{left:0%;}
-  50%{left:90%;}
-  100%{left:0%;}
-}
-@keyframes tickShimmer{
-  0%{filter:hue-rotate(0deg) brightness(1);}
-  50%{filter:hue-rotate(40deg) brightness(1.5);}
-  100%{filter:hue-rotate(0deg) brightness(1);}
-}
-.photo-preview-wrap{position:relative;display:none;margin-top:12px;max-width:180px;}
-.photo-preview-wrap.show{display:inline-block;}
-.photo-preview{display:block;width:100%;border:1px solid var(--green-mid);}
-.photo-preview-wrap::before,.photo-preview-wrap::after{
-  content:"";position:absolute;width:14px;height:14px;border:1px solid var(--green);
-  background-image:linear-gradient(var(--green),var(--green)),linear-gradient(var(--green),var(--green));
-  background-size:8px 1px,1px 8px;background-position:center,center;background-repeat:no-repeat;
-}
-.photo-preview-wrap::before{top:-7px;right:-7px;}
-.photo-preview-wrap::after{bottom:-7px;left:-7px;}
+/* settings + save */
+.settings-body{display:flex;flex-direction:column;gap:8px;}
+.hint{font-size:.95rem;color:var(--ink-soft);}
+.save-bar{display:flex;flex-direction:column;gap:8px;align-items:flex-start;}
+.btn{font-family:var(--font-title);font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;padding:11px 18px;border:3px solid var(--ink);background:var(--cream);color:var(--ink);box-shadow:4px 4px 0 var(--ink);cursor:pointer;transition:transform .06s,box-shadow .06s;}
+.btn:active{transform:translate(4px,4px);box-shadow:0 0 0 var(--ink);}
+.btn.primary{background:var(--ink);color:var(--cream);box-shadow:4px 4px 0 var(--cream);}
+.btn.primary:active{box-shadow:0 0 0 var(--cream);}
+.save-status{margin:0;min-height:1.2em;color:var(--cream);font-size:1.05rem;letter-spacing:.03em;}
+.save-status.err{background:var(--cream);color:var(--ink);padding:3px 8px;}
 
-.legend{
-  display:flex;flex-wrap:wrap;gap:16px;margin-top:20px;font-size:0.95rem;color:var(--green-dim);
-}
-
-/* ---------- Settings + Save ---------- */
-.top-actions{display:flex;justify-content:flex-end;margin-bottom:6px;}
-.bracket-btn{
-  font-family:var(--font-body);font-size:1.05rem;letter-spacing:0.03em;color:var(--green);
-  background:none;border:2px solid var(--green);padding:8px 14px;cursor:pointer;
-  box-shadow:var(--btn-shadow);transition:box-shadow .08s,transform .08s;
-}
-.bracket-btn:active{box-shadow:var(--btn-shadow-active);transform:translate(2px,2px);}
-.bracket-btn:hover{background:var(--green);color:var(--invert-text);}
-
-.settings{
-  border:1px solid var(--green);padding:16px 18px;margin-bottom:22px;display:none;flex-direction:column;gap:10px;
-}
-.settings.open{display:flex;}
-.settings label{font-size:1.05rem;color:var(--green);}
-.settings input[type="text"]{
-  width:100%;font-family:var(--font-body);font-size:1.1rem;padding:8px 10px;
-  background:transparent;border:1px solid var(--green-dim);color:var(--green);
-}
-.settings input[type="text"]::placeholder{color:var(--green-faint);}
-.settings input[type="text"]:focus{outline:none;border-color:var(--green);}
-.settings .hint{font-size:0.92rem;color:var(--green-dim);line-height:1.4;}
-
-.save-bar{display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:28px;}
-.save-btn{width:100%;max-width:420px;padding:14px;font-size:1.2rem;letter-spacing:0.05em;box-shadow:5px 5px 0 var(--green-faint);}
-.save-btn:active{box-shadow:2px 2px 0 var(--green-faint);}
-.save-status{font-size:1rem;color:var(--green-dim);min-height:1.3em;text-align:center;}
-.save-status.err{background:var(--green);color:var(--invert-text);padding:4px 10px;font-weight:700;}
+@media (prefers-reduced-motion:reduce){.g-spin,.live,.boot .cursor{animation:none;}.panel{transition:none;}}
 </style>
+</head>
+<body>
 
-<div class="page">
+<div class="boot" id="boot"><span id="bootText"></span><span class="cursor">&nbsp;</span></div>
 
-  <div class="boot" id="boot"><span id="bootText"></span><span class="cursor">&nbsp;</span></div>
+<div class="desktop" id="desktop">
 
-  <div class="main-content" id="mainContent">
-
-  <div class="hero">
-    <p class="kicker">&gt; layout test // crt skin</p>
-    <h1>DAILY LOG</h1>
-    <p class="sub">Full field set, compact row format, in the chosen colors. Click around.</p>
-    <div class="date-field">
-      <span class="date-label">&gt; LOG DATE:</span>
-      <span class="date-display" id="dateDisplay" tabindex="0" role="button"></span>
-      <div class="cal-popup" id="calPopup">
-        <div class="cal-head">
-          <button type="button" class="cal-nav" id="calPrev">&lsaquo;</button>
-          <span class="cal-title" id="calTitle"></span>
-          <button type="button" class="cal-nav" id="calNext">&rsaquo;</button>
+  <details class="win" open>
+    <summary><span class="title">Daily Log</span><span class="dither"></span><span class="toggle"></span></summary>
+    <div class="body">
+      <div class="sys-row">
+        <div class="screen globe" aria-hidden="true">
+          <div class="g-tilt"><div class="g-spin">
+            <span class="ring lon l1"></span><span class="ring lon l2"></span><span class="ring lon l3"></span>
+            <span class="ring lon l4"></span><span class="ring lon l5"></span><span class="ring lon l6"></span>
+            <span class="ring t1"></span><span class="ring t2"></span><span class="ring eq t3"></span><span class="ring t4"></span><span class="ring t5"></span>
+          </div></div>
         </div>
-        <div class="cal-grid" id="calGrid"></div>
+        <div class="screen info" aria-live="polite">
+          <div class="irow"><span class="ik">DATE</span><span class="iv" id="iDate"></span></div>
+          <div class="irow"><span class="ik">MONTH</span><span class="iv" id="iMonth"></span></div>
+          <div class="irow"><span class="ik">LOGGED</span><span class="iv"><span id="iLog"></span><span class="bar" id="iBar"></span></span></div>
+          <div class="irow"><span class="ik">STATUS</span><span class="iv"><span id="iStatus"></span><span class="live"></span></span></div>
+        </div>
       </div>
-    </div>
-  </div>
-
-  <div class="top-actions">
-    <button class="bracket-btn" id="settingsToggle" type="button">[ SETTINGS ]</button>
-  </div>
-
-  <div class="settings" id="settingsPanel">
-    <label for="webAppUrl">&gt; YOUR APPS SCRIPT WEB APP URL</label>
-    <input type="text" id="webAppUrl" placeholder="https://script.google.com/macros/s/…/exec">
-    <p class="hint">Paste the link you get after deploying the script. Saved only in this browser.</p>
-    <button class="bracket-btn" id="saveUrlBtn" type="button">[ SAVE URL ]</button>
-  </div>
-
-  <div class="group-label"><div class="title">Quick fields</div></div>
-  <div class="card" id="blockSimple"></div>
-
-  <div class="group-label"><div class="title">Work Process</div><div class="caption">&gt; READING PRODUCTIVITY DATA...</div></div>
-  <div class="card" id="blockWork"></div>
-
-  <div class="group-label"><div class="title">Knowledge Input</div><div class="caption">&gt; SCANNING TODAY'S READING LOG...</div></div>
-  <div class="globe-row">
-    <div class="globe-deco" aria-hidden="true">
-      <div class="globe-tilt">
-        <div class="globe-spin">
-          <span class="ring lon l1"></span>
-          <span class="ring lon l2"></span>
-          <span class="ring lon l3"></span>
-          <span class="ring lon l4"></span>
-          <span class="ring lon l5"></span>
-          <span class="ring lon l6"></span>
-          <span class="ring lat t1"></span>
-          <span class="ring lat t2"></span>
-          <span class="ring lat equator t3"></span>
-          <span class="ring lat t4"></span>
-          <span class="ring lat t5"></span>
+      <div class="date-line">
+        <span class="lbl">&gt; Log date:</span>
+        <span class="val" id="dateDisplay" tabindex="0" role="button"></span>
+        <div class="cal-popup" id="calPopup">
+          <div class="cal-head">
+            <button type="button" class="cal-nav" id="calPrev" aria-label="Previous month">&lsaquo;</button>
+            <span class="cal-title" id="calTitle"></span>
+            <button type="button" class="cal-nav" id="calNext" aria-label="Next month">&rsaquo;</button>
+          </div>
+          <div class="cal-grid" id="calGrid"></div>
         </div>
       </div>
     </div>
-    <div class="scope-deco" aria-hidden="true">
-      <svg viewBox="0 0 200 40" preserveAspectRatio="none">
-        <polyline points="0,20 2.5,10.01 5,3.83 7.5,3.83 10,10.01 12.5,20 15,29.99 17.5,36.17 20,36.17 22.5,29.99 25,20 27.5,10.01 30,3.83 32.5,3.83 35,10.01 37.5,20 40,29.99 42.5,36.17 45,36.17 47.5,29.99 50,20 52.5,10.01 55,3.83 57.5,3.83 60,10.01 62.5,20 65,29.99 67.5,36.17 70,36.17 72.5,29.99 75,20 77.5,10.01 80,3.83 82.5,3.83 85,10.01 87.5,20 90,29.99 92.5,36.17 95,36.17 97.5,29.99 100,20 102.5,10.01 105,3.83 107.5,3.83 110,10.01 112.5,20 115,29.99 117.5,36.17 120,36.17 122.5,29.99 125,20 127.5,10.01 130,3.83 132.5,3.83 135,10.01 137.5,20 140,29.99 142.5,36.17 145,36.17 147.5,29.99 150,20 152.5,10.01 155,3.83 157.5,3.83 160,10.01 162.5,20 165,29.99 167.5,36.17 170,36.17 172.5,29.99 175,20 177.5,10.01 180,3.83 182.5,3.83 185,10.01 187.5,20 190,29.99 192.5,36.17 195,36.17 197.5,29.99 200,20"/>
-      </svg>
-      <div class="scope-hud">
-        <span class="hud-static">0xF3.A2</span>
-        <span class="hud-blink">::REC</span>
-        <span class="hud-static">SIG<span class="hud-cycle"><span>7K</span><span>Q1</span><span>Z4</span></span></span>
-      </div>
+  </details>
+
+  <details class="win" open id="winCheck">
+    <summary><span class="title">Checkpoints</span><span class="dither"></span><span class="toggle"></span></summary>
+    <div class="body" id="bodyCheck"></div>
+  </details>
+
+  <details class="win" open id="winDaily">
+    <summary><span class="title">Daily</span><span class="dither"></span><span class="toggle"></span></summary>
+    <div class="body" id="bodyDaily"></div>
+  </details>
+
+  <details class="win" open id="winHabits">
+    <summary><span class="title">Habits</span><span class="dither"></span><span class="toggle"></span></summary>
+    <div class="body" id="bodyHabits"></div>
+  </details>
+
+  <details class="win" id="winSubs">
+    <summary><span class="title">Substances &amp; Screen</span><span class="dither"></span><span class="toggle"></span></summary>
+    <div class="body" id="bodySubs"></div>
+  </details>
+
+  <details class="win" id="winMemory">
+    <summary><span class="title">Memory</span><span class="dither"></span><span class="toggle"></span></summary>
+    <div class="body" id="bodyMemory"></div>
+  </details>
+
+  <details class="win" id="winSettings">
+    <summary><span class="title">Settings</span><span class="dither"></span><span class="toggle"></span></summary>
+    <div class="body settings-body">
+      <label class="k" for="webAppUrl">&gt; Apps Script web app URL</label>
+      <input class="txt" type="text" id="webAppUrl" placeholder="https://script.google.com/macros/s/.../exec" autocomplete="off" autocapitalize="off" spellcheck="false">
+      <p class="hint">Paste the link you get after deploying the script. Saved only in this browser.</p>
+      <div><button class="btn" id="saveUrlBtn" type="button">Save URL</button></div>
     </div>
-  </div>
-  <div class="card" id="blockReading"></div>
-
-  <div class="group-label"><div class="title">Physical Activity</div><div class="caption">&gt; LOADING MOVEMENT DATA...</div></div>
-  <div class="card" id="blockExercise"></div>
-
-  <div class="group-label"><div class="title">Daily Intake Log</div><div class="caption">&gt; CHECKING CONSUMED ITEMS...</div></div>
-  <div class="card" id="blockMeds"></div>
-
-  <div class="group-label"><div class="title">End of Day Report</div><div class="caption">&gt; PREPARING SESSION FOR ARCHIVE...</div></div>
-  <div class="card" id="blockEnd"></div>
-
-  <div class="legend">
-    <span>□ = not selected</span>
-    <span>■ = selected</span>
-    <span>Mood/Space/Work — pick one</span>
-    <span>Emotions/Reading/Exercise/Meds — pick several</span>
-  </div>
+  </details>
 
   <div class="save-bar">
-    <button class="bracket-btn save-btn" id="saveBtn" type="button">[ SAVE ENTRY ]</button>
+    <button class="btn primary" id="saveBtn" type="button">Save entry</button>
     <p class="save-status" id="saveStatus"></p>
-  </div>
-
   </div>
 
 </div>
@@ -480,754 +275,592 @@ p{margin:0;}
 (function(){
   "use strict";
 
-  // ---------- Active date (today by default, editable for backfill) ----------
-  var pad = function(n){ return String(n).padStart(2,"0"); };
+  /* ---------- helpers ---------- */
+  var pad = function(n){ return String(n).padStart(2, "0"); };
+  function $(s, r){ return (r || document).querySelector(s); }
+  function $$(s, r){ return [].slice.call((r || document).querySelectorAll(s)); }
+  function el(tag, cls, text){
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text != null) e.textContent = text;
+    return e;
+  }
+  function lsGet(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }
+  function lsSet(k, v){ try { localStorage.setItem(k, v); } catch(e){} }
+  function fmtMin(v){
+    var h = Math.floor(v / 60), m = Math.round(v % 60);
+    return h ? (m ? h + " h " + m + " min" : h + " h") : m + " min";
+  }
+
+  /* ---------- active date ---------- */
   var realToday = new Date();
-  var realTodayStr = realToday.getFullYear()+"-"+pad(realToday.getMonth()+1)+"-"+pad(realToday.getDate());
-  function getDateFromUrl(){
-    try {
-      var m = location.search.match(/[?&]date=(\d{4}-\d{2}-\d{2})(?:&|$)/);
-      if (m) return m[1];
-    } catch(e) {}
+  var realTodayStr = realToday.getFullYear() + "-" + pad(realToday.getMonth() + 1) + "-" + pad(realToday.getDate());
+  function dateFromUrl(){
+    try { var m = location.search.match(/[?&]date=(\d{4}-\d{2}-\d{2})(?:&|$)/); if (m) return m[1]; } catch(e){}
     return null;
   }
-  var activeDateStr = getDateFromUrl() || realTodayStr;
+  var activeDateStr = dateFromUrl() || realTodayStr;
+  var activeDate = new Date(activeDateStr + "T00:00:00");
+  var DOW = ["SUN","MON","TUE","WED","THU","FRI","SAT"];
+  var MON = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
+  var activeDisplay = pad(activeDate.getDate()) + "." + pad(activeDate.getMonth() + 1) + "." + activeDate.getFullYear();
 
-  // ---------- Boot sequence ----------
-  (function boot(){
-    var textEl = document.getElementById("bootText");
-    var content = document.getElementById("mainContent");
-    var d = new Date(activeDateStr + "T00:00:00");
-    var dateStr = pad(d.getDate())+"."+pad(d.getMonth()+1)+"."+d.getFullYear();
-    var script = "DAILY LOG SYSTEM v1.0\nINITIALIZING NEW SESSION...\n\nDATE: "+dateStr+"\nSTATUS: ONLINE\nUSER: ACTIVE\n\n> Loading memory...\n> Checking system state...\n> Ready for input.\n\n[ BEGIN DAILY LOG ]";
-    var reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    function finish(){
-      content.classList.add("show");
-    }
-    if (reduced){
-      textEl.textContent = script;
-      setTimeout(finish, 300);
-      return;
-    }
-    var i = 0;
-    function tick(){
-      textEl.textContent = script.slice(0, i);
-      i++;
-      if (i <= script.length){
-        setTimeout(tick, 14);
-      } else {
-        setTimeout(finish, 400);
-      }
-    }
-    tick();
-  })();
-
-  // ---------- State + persistence ----------
-  var todayStr = activeDateStr;
-  var STORAGE_KEY = "dailylog_" + todayStr;
+  var KEY = "dailylog2_" + activeDateStr;
+  var SAVED_KEY = "dailylog2_saved_" + activeDateStr;
   var URL_KEY = "dailylog_weburl";
   var LISTS_KEY = "dailylog_customlists";
 
-  var defaultState = {
-    date: todayStr,
-    mood: "", emotions: [],
-    sleepHours: 0, sleepQuality: "",
-    space: "",
-    screenHours: 0,
-    coffee: 0, cigarettes: 0,
-    dreamPick: "", dreamText: "",
-    workHours: 0, workSatisfaction: "",
-    readingMinutes: {}, readingBooks: [],
-    exerciseMinutes: {},
-    meds: [],
-    wisdomText: "",
-    photoData: "", photoName: ""
-  };
-  var state = JSON.parse(JSON.stringify(defaultState));
-  try {
-    var saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) state = Object.assign({}, defaultState, JSON.parse(saved));
-  } catch(e) {}
-  if (!state.readingMinutes || typeof state.readingMinutes !== "object") state.readingMinutes = {};
-
-  function persist(){
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
-  }
-
-  var customLists = { books: [], exercise: [], meds: [] };
-  var listsExisted = false;
-  try {
-    var savedLists = localStorage.getItem(LISTS_KEY);
-    if (savedLists) { customLists = Object.assign(customLists, JSON.parse(savedLists)); listsExisted = true; }
-  } catch(e) {}
-  function persistLists(){
-    try { localStorage.setItem(LISTS_KEY, JSON.stringify(customLists)); } catch(e) {}
-  }
-  if (!listsExisted){
-    customLists.meds = ["Vitamin D","Magnesium","Omega-3"];
-    customLists.books = ["Atomic Habits","Dune","1984"];
-    customLists.exercise = ["Stretching","Rollerblading","Strength"];
-    persistLists();
-  }
-  function addToCustomList(key, label){
-    if (customLists[key].indexOf(label) === -1){
-      customLists[key].push(label);
-      persistLists();
-    }
-  }
-  function removeFromCustomList(key, label){
-    var i = customLists[key].indexOf(label);
-    if (i !== -1){
-      customLists[key].splice(i,1);
-      persistLists();
-    }
-  }
-
-  // ---------- Settings panel ----------
-  var settingsPanel = document.getElementById("settingsPanel");
-  var urlInput = document.getElementById("webAppUrl");
-  try { urlInput.value = localStorage.getItem(URL_KEY) || ""; } catch(e) {}
-  document.getElementById("settingsToggle").addEventListener("click", function(){
-    settingsPanel.classList.toggle("open");
-  });
-  document.getElementById("saveUrlBtn").addEventListener("click", function(){
-    try { localStorage.setItem(URL_KEY, urlInput.value.trim()); } catch(e) {}
-    settingsPanel.classList.remove("open");
-    setStatus("URL saved.", false);
-  });
-  if (!(function(){ try { return !!localStorage.getItem(URL_KEY); } catch(e){ return false; } })()) {
-    settingsPanel.classList.add("open");
-  }
-
-  // ---------- Date field (today by default, editable for backfill) ----------
-  var dateDisplay = document.getElementById("dateDisplay");
-  var activeDateDisplay = (function(){
-    var d = new Date(activeDateStr + "T00:00:00");
-    return pad(d.getDate())+"."+pad(d.getMonth()+1)+"."+d.getFullYear();
-  })();
+  /* ---------- boot overlay ---------- */
   (function(){
-    dateDisplay.textContent = activeDateDisplay;
-    if (activeDateStr === realTodayStr) {
-      var flag = document.createElement("span");
-      flag.className = "today-flag";
-      flag.textContent = "(TODAY)";
-      dateDisplay.appendChild(flag);
-    }
+    var boot = $("#boot"), textEl = $("#bootText"), done = false;
+    var script = "DAILY LOG SYSTEM v2.0\nINITIALIZING NEW SESSION...\n\nDATE: " + activeDisplay + "\nSTATUS: ONLINE\nUSER: ACTIVE\n\n> Loading memory...\n> Checking system state...\n> Ready for input.\n\n[ BEGIN DAILY LOG ]";
+    function finish(){ if (done) return; done = true; boot.classList.add("done"); }
+    boot.addEventListener("click", finish);
+    var reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduced){ textEl.textContent = script; setTimeout(finish, 300); return; }
+    var i = 0;
+    (function tick(){
+      textEl.textContent = script.slice(0, i++);
+      if (i <= script.length) setTimeout(tick, 14); else setTimeout(finish, 500);
+    })();
   })();
 
-  // ---------- Simple calendar popup ----------
-  var calPopup = document.getElementById("calPopup");
-  var calTitle = document.getElementById("calTitle");
-  var calGrid = document.getElementById("calGrid");
-  var calPrev = document.getElementById("calPrev");
-  var calNext = document.getElementById("calNext");
-  var calViewDate = new Date(activeDateStr + "T00:00:00");
-  var monthNames = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
-  var dowNames = ["MO","TU","WE","TH","FR","SA","SU"];
-
-  function calToISO(y,m,d){ return y+"-"+pad(m+1)+"-"+pad(d); }
-
-  function renderCalendar(){
-    var y = calViewDate.getFullYear();
-    var m = calViewDate.getMonth();
-    calTitle.textContent = monthNames[m] + " " + y;
-    calGrid.innerHTML = "";
-    dowNames.forEach(function(dn){
-      var el = document.createElement("div");
-      el.className = "cal-dow"; el.textContent = dn;
-      calGrid.appendChild(el);
-    });
-    var firstDay = new Date(y, m, 1);
-    var startOffset = (firstDay.getDay() + 6) % 7;
-    var daysInMonth = new Date(y, m + 1, 0).getDate();
-    for (var i = 0; i < startOffset; i++){
-      var blank = document.createElement("span");
-      blank.className = "cal-day other-month";
-      calGrid.appendChild(blank);
+  /* ---------- custom lists (books, supplements) ---------- */
+  var lists = { books: ["Atomic Habits","Dune","1984"], meds: ["Vitamin D","Magnesium","Omega-3"] };
+  (function(){
+    var raw = lsGet(LISTS_KEY);
+    if (raw){
+      try {
+        var p = JSON.parse(raw);
+        if (p.books) lists.books = p.books;
+        if (p.meds) lists.meds = p.meds;
+      } catch(e){}
     }
-    for (var day = 1; day <= daysInMonth; day++){
-      var iso = calToISO(y, m, day);
-      var btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "cal-day";
-      btn.textContent = day;
-      btn.setAttribute("data-iso", iso);
+  })();
+  function saveLists(){
+    var raw = {};
+    try { raw = JSON.parse(lsGet(LISTS_KEY) || "{}"); } catch(e){}
+    raw.books = lists.books; raw.meds = lists.meds;
+    lsSet(LISTS_KEY, JSON.stringify(raw));
+  }
+
+  /* ---------- UI builders ---------- */
+  var CAPS = {
+    mood: ["Rough","Meh","Okay","Good","Great","Amazing"],
+    emotions: ["Joy","Calm","Sadness","Anxiety","Anger","Apathy"],
+    energy: ["Empty","Low","Meh","Okay","High","Max"],
+    social: ["Alone","Low","Some","Normal","High","Intense"],
+    stress: ["None","Low","Mild","Medium","High","Max"],
+    work: ["Bad","Meh","Okay","Good","Great","Amazing"],
+    int: ["Light","Moderate","Hard"],
+    subt: ["Alcohol","Weed","Psych","Stims","Sedat.","Other"],
+    dc: ["Pleasant","Neutral","Strange","Lucid","Sad","Nightmare"]
+  };
+  var EX = ["Stretching","Strength","Rollerblading","Walking","Yoga","Other"];
+
+  var STEPS = {};
+  var restoring = true;
+
+  function stepper(id, step, unit, type, first){
+    var s = el("span", "stepper");
+    s._s = { step: step, val: 0, unit: unit || "", type: type || "", first: first || step };
+    var minus = el("button", null, "-"); minus.type = "button"; minus.setAttribute("aria-label", "decrease");
+    var v = el("span", "v"), u = el("span", "u");
+    var plus = el("button", null, "+"); plus.type = "button"; plus.setAttribute("aria-label", "increase");
+    s.appendChild(minus); s.appendChild(v); s.appendChild(u); s.appendChild(plus);
+    s._show = function(){
+      v.textContent = s._s.type === "hm" ? fmtMin(s._s.val) : s._s.val;
+      u.textContent = s._s.type === "hm" ? "" : s._s.unit;
+      if (s._s.type === "hm") v.style.minWidth = "7.5ch";
+    };
+    function bump(d){
+      var x = s._s;
+      if (d > 0 && x.val === 0) x.val = x.first;
+      else x.val = Math.max(0, Math.round((x.val + x.step * d) * 100) / 100);
+      s._show(); changed();
+    }
+    minus.addEventListener("click", function(){ bump(-1); });
+    plus.addEventListener("click", function(){ bump(1); });
+    s._show();
+    if (id) STEPS[id] = s;
+    return s;
+  }
+
+  function scale(name, caps, multi){
+    var g = el("div", "scale");
+    caps.forEach(function(c){ g.appendChild(el("span", "cap", c)); });
+    caps.forEach(function(c, i){
+      var lab = el("label", "b"), inp = el("input");
+      inp.type = multi ? "checkbox" : "radio";
+      inp.name = multi ? name + "-" + (i + 1) : name;
+      inp.value = String(i + 1);
+      if (multi) inp.id = inp.name;
+      lab.appendChild(inp); lab.appendChild(el("span", "", String(i + 1)));
+      g.appendChild(lab);
+      if (!multi){
+        inp.addEventListener("click", function(){
+          if (inp._was){ inp.checked = false; inp._was = false; changed(); }
+          else { $$('input[name="' + name + '"]', g).forEach(function(o){ o._was = false; }); inp._was = true; }
+        });
+      }
+    });
+    return g;
+  }
+
+  function field(label, node, head){
+    var f = el("div", "field");
+    if (head){
+      var h = el("div", "f-head"); h.appendChild(el("span", "f-label", label)); h.appendChild(head); f.appendChild(h);
+    } else {
+      f.appendChild(el("span", "f-label", label));
+    }
+    if (node) f.appendChild(node);
+    return f;
+  }
+  function row(label, ctrl){
+    var r = el("div", "row"); r.appendChild(el("span", "k", label)); r.appendChild(ctrl); return r;
+  }
+
+  var HABITS = [];
+  function habit(id, label, buildPanel, sumFn){
+    var wrap = el("div", "habit"), cb = el("input");
+    cb.type = "checkbox"; cb.id = "h-" + id;
+    var lab = el("label", "hrow"); lab.htmlFor = cb.id;
+    lab.appendChild(el("span", "plus")); lab.appendChild(el("span", "hname", label));
+    var hs = el("span", "hsum", "—"); lab.appendChild(hs);
+    var panel = el("div", "panel"), o = el("div"), inner = el("div", "inner");
+    buildPanel(inner); o.appendChild(inner); panel.appendChild(o);
+    wrap.appendChild(cb); wrap.appendChild(lab); wrap.appendChild(panel);
+    HABITS.push({ cb: cb, hs: hs, sum: sumFn });
+    return wrap;
+  }
+
+  var uid = 0;
+  function liItem(name, details, removable){
+    var d = el("div", "li"); d.dataset.name = name;
+    var cb = el("input"); cb.type = "checkbox"; cb.id = "li" + (++uid);
+    var lab = el("label"); lab.htmlFor = cb.id;
+    lab.appendChild(el("span", "cb")); lab.appendChild(el("span", "nm", name));
+    d.appendChild(cb); d.appendChild(lab);
+    d._cb = cb;
+    if (removable){
+      var x = el("button", "rm", "×"); x.type = "button"; x.setAttribute("aria-label", "Remove " + name);
+      d.appendChild(x); d._rm = x;
+    }
+    if (details){
+      var det = el("div", "det"); details(det, d); d.appendChild(det);
+    }
+    return d;
+  }
+
+  /* ----- Checkpoints ----- */
+  var bodyCheck = $("#bodyCheck");
+  bodyCheck.appendChild(field("Mood", scale("mood", CAPS.mood)));
+  bodyCheck.appendChild(field("Emotions", scale("emotions", CAPS.emotions, true)));
+  bodyCheck.appendChild(field("Energy", scale("energy", CAPS.energy)));
+  bodyCheck.appendChild(field("Social", scale("social", CAPS.social)));
+  bodyCheck.appendChild(field("Stress", scale("stress", CAPS.stress)));
+  bodyCheck.appendChild(field("Sleep", null, stepper("sleep", 10, "", "hm", 420)));
+
+  /* ----- Daily ----- */
+  var bodyDaily = $("#bodyDaily");
+  bodyDaily.appendChild(habit("medit", "Meditation", function(p){
+    p.appendChild(row("Time", stepper("medit", 5, "min", "", 10)));
+  }, function(){ var v = STEPS.medit._s.val; return v ? v + " MIN" : "ON"; }));
+
+  var suppsList = el("div", "list"); suppsList.id = "suppsList";
+  var suppsInner;
+  bodyDaily.appendChild(habit("supps", "Medication / supplements", function(p){
+    suppsInner = p;
+    p.appendChild(suppsList);
+    var ar = el("div", "addrow");
+    var add = el("button", "addbtn", "+ Add"); add.type = "button"; add.id = "addSupp";
+    var ed = el("button", "addbtn small", "Edit"); ed.type = "button"; ed.id = "editSupp";
+    ar.appendChild(add); ar.appendChild(ed); p.appendChild(ar);
+  }, function(){
+    var n = $$("#suppsList .li").filter(function(l){ return l._cb.checked; }).length;
+    return n ? n + (n === 1 ? " ITEM" : " ITEMS") : "ON";
+  }));
+
+  bodyDaily.appendChild(habit("cigs", "Cigarettes", function(p){
+    p.appendChild(row("Count", stepper("cigs", 1, "pcs", "", 1)));
+  }, function(){ var v = STEPS.cigs._s.val; return v ? v + " PCS" : "ON"; }));
+
+  bodyDaily.appendChild(habit("coffee", "Coffee", function(p){
+    p.appendChild(row("Cups", stepper("coffee", 1, "cups", "", 1)));
+  }, function(){ var v = STEPS.coffee._s.val; return v ? v + " CUPS" : "ON"; }));
+
+  var workField = field("Work", scale("work", CAPS.work));
+  workField.style.borderTop = "2px dashed var(--rule)"; workField.style.paddingTop = "10px";
+  bodyDaily.appendChild(workField);
+
+  /* ----- Habits ----- */
+  var bodyHabits = $("#bodyHabits");
+  bodyHabits.appendChild(habit("ex", "Exercise", function(p){
+    var list = el("div", "list");
+    EX.forEach(function(n){
+      var item = liItem(n, function(det){
+        det.appendChild(row("Time", stepper("exm-" + n, 5, "min", "", 30)));
+      });
+      item._cb.id = "ex-" + n;
+      $("label", item).htmlFor = item._cb.id;
+      list.appendChild(item);
+    });
+    p.appendChild(list);
+    var f = el("div", "field"); f.style.padding = "0"; f.style.border = "0";
+    f.appendChild(el("span", "k", "Intensity")); f.appendChild(scale("int", CAPS.int));
+    p.appendChild(f);
+  }, function(){
+    var t = 0, any = false;
+    EX.forEach(function(n){ if ($("#ex-" + n).checked){ any = true; t += STEPS["exm-" + n]._s.val; } });
+    return t ? t + " MIN" : (any ? "ON" : "ON");
+  }));
+
+  var booksList = el("div", "list"); booksList.id = "booksList";
+  bodyHabits.appendChild(habit("read", "Reading", function(p){
+    p.appendChild(booksList);
+    var ar = el("div", "addrow");
+    var add = el("button", "addbtn", "+ Add book"); add.type = "button"; add.id = "addBook";
+    var ed = el("button", "addbtn small", "Edit"); ed.type = "button"; ed.id = "editBook";
+    ar.appendChild(add); ar.appendChild(ed); p.appendChild(ar);
+  }, function(){
+    var t = 0;
+    $$("#booksList .li").forEach(function(l){ if (l._cb.checked) t += l._min._s.val; });
+    return t ? t + " MIN" : "ON";
+  }));
+
+  /* ----- Substances & Screen ----- */
+  var bodySubs = $("#bodySubs");
+  bodySubs.appendChild(habit("sub", "Substances", function(p){
+    p.appendChild(el("span", "k", "Type"));
+    p.appendChild(scale("subt", CAPS.subt));
+  }, function(){
+    var t = radioVal("subt"); return t ? CAPS.subt[t - 1].toUpperCase() : "ON";
+  }));
+  var screenField = el("div", "field");
+  screenField.style.borderTop = "2px dashed var(--rule)"; screenField.style.paddingTop = "10px";
+  screenField.appendChild(el("span", "f-label", "Screen"));
+  screenField.appendChild(row("Total time", stepper("screen", 10, "", "hm", 120)));
+  var pickups = el("input", "num"); pickups.type = "text"; pickups.inputMode = "numeric"; pickups.id = "pickups"; pickups.setAttribute("aria-label", "Phone pickups");
+  screenField.appendChild(row("Phone pickups", pickups));
+  bodySubs.appendChild(screenField);
+
+  /* ----- Memory ----- */
+  var bodyMemory = $("#bodyMemory");
+  var dreamText = el("textarea"); dreamText.id = "dreamText"; dreamText.rows = 2; dreamText.placeholder = "Describe the dream (optional)";
+  bodyMemory.appendChild(habit("dream", "Dreams", function(p){
+    p.appendChild(el("span", "k", "Character"));
+    p.appendChild(scale("dc", CAPS.dc));
+    p.appendChild(dreamText);
+  }, function(){
+    var t = radioVal("dc"); return t ? CAPS.dc[t - 1].toUpperCase() : "ON";
+  }));
+  var photoField = el("div", "field");
+  photoField.style.borderTop = "2px dashed var(--rule)"; photoField.style.paddingTop = "10px";
+  photoField.appendChild(el("span", "f-label", "Photo"));
+  var slotsEl = el("div", "photos"); photoField.appendChild(slotsEl);
+  bodyMemory.appendChild(photoField);
+  var memory = el("textarea"); memory.id = "memory"; memory.rows = 2; memory.placeholder = "What do you want to remember about today?";
+  bodyMemory.appendChild(field("Day memory", memory));
+
+  /* ---------- dynamic lists ---------- */
+  function renderBooks(prev){
+    booksList.innerHTML = "";
+    lists.books.forEach(function(name){
+      var item = liItem(name, function(det, d){
+        d._min = stepper(null, 15, "min", "", 15);
+        d._pages = stepper(null, 5, "pages", "", 10);
+        det.appendChild(row("Time", d._min));
+        det.appendChild(row("Pages", d._pages));
+      }, true);
+      var st = prev && prev[name];
+      if (st){ item._cb.checked = !!st.on; item._min._s.val = st.min || 0; item._pages._s.val = st.pages || 0; item._min._show(); item._pages._show(); }
+      item._rm.addEventListener("click", function(){
+        if (!window.confirm("Remove \"" + name + "\" from the list?")) return;
+        var snap = booksState(); delete snap[name];
+        lists.books.splice(lists.books.indexOf(name), 1); saveLists(); renderBooks(snap); changed();
+      });
+      booksList.appendChild(item);
+    });
+  }
+  function renderSupps(prev){
+    suppsList.innerHTML = "";
+    lists.meds.forEach(function(name){
+      var item = liItem(name, null, true);
+      if (prev && prev[name]) item._cb.checked = true;
+      item._rm.addEventListener("click", function(){
+        if (!window.confirm("Remove \"" + name + "\" from the list?")) return;
+        var snap = suppsState(); delete snap[name];
+        lists.meds.splice(lists.meds.indexOf(name), 1); saveLists(); renderSupps(snap); changed();
+      });
+      suppsList.appendChild(item);
+    });
+  }
+  function booksState(){
+    var o = {};
+    $$("#booksList .li").forEach(function(l){ o[l.dataset.name] = { on: l._cb.checked, min: l._min._s.val, pages: l._pages._s.val }; });
+    return o;
+  }
+  function suppsState(){
+    var o = {};
+    $$("#suppsList .li").forEach(function(l){ o[l.dataset.name] = l._cb.checked; });
+    return o;
+  }
+  $("#addBook").addEventListener("click", function(){
+    var n = (window.prompt("Book title") || "").trim();
+    if (!n || lists.books.indexOf(n) !== -1) return;
+    var snap = booksState(); lists.books.push(n); saveLists(); renderBooks(snap);
+    $$("#booksList .li").pop()._cb.checked = true; changed();
+  });
+  $("#addSupp").addEventListener("click", function(){
+    var n = (window.prompt("Medication or supplement name") || "").trim();
+    if (!n || lists.meds.indexOf(n) !== -1) return;
+    var snap = suppsState(); lists.meds.push(n); saveLists(); renderSupps(snap);
+    $$("#suppsList .li").pop()._cb.checked = true; changed();
+  });
+  $("#editBook").addEventListener("click", function(){ booksList.parentNode.classList.toggle("editing"); });
+  $("#editSupp").addEventListener("click", function(){ suppsList.parentNode.classList.toggle("editing"); });
+  renderBooks(null); renderSupps(null);
+
+  /* ---------- photos ---------- */
+  var PHOTOS = [null, null, null];
+  function shrink(file, cb){
+    var r = new FileReader();
+    r.onload = function(){
+      var img = new Image();
+      img.onload = function(){
+        var k = Math.min(1, 1280 / Math.max(img.width, img.height));
+        var c = document.createElement("canvas");
+        c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+        c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+        cb(c.toDataURL("image/jpeg", 0.8));
+      };
+      img.onerror = function(){ cb(r.result); };
+      img.src = r.result;
+    };
+    r.readAsDataURL(file);
+  }
+  function pickPhoto(i){
+    var inp = el("input"); inp.type = "file"; inp.accept = "image/*";
+    inp.addEventListener("change", function(){
+      var f = inp.files[0]; if (!f) return;
+      shrink(f, function(data){
+        PHOTOS[i] = { data: data, name: f.name.replace(/\.[^.]+$/, "") + ".jpg", sent: false };
+        renderPhotos(); changed();
+      });
+    });
+    inp.click();
+  }
+  function renderPhotos(){
+    slotsEl.innerHTML = "";
+    PHOTOS.forEach(function(p, i){
+      var slot = el("div", "slot");
+      slot.setAttribute("role", "button"); slot.tabIndex = 0; slot.setAttribute("aria-label", "Photo " + (i + 1));
+      if (p){
+        var img = el("img"); img.src = p.data; img.alt = "";
+        slot.appendChild(img);
+        var x = el("button", "rm", "×"); x.type = "button"; x.setAttribute("aria-label", "Remove photo");
+        x.addEventListener("click", function(ev){ ev.stopPropagation(); PHOTOS[i] = null; renderPhotos(); changed(); });
+        slot.appendChild(x);
+      } else {
+        slot.textContent = "+";
+        slot.addEventListener("click", function(){ pickPhoto(i); });
+        slot.addEventListener("keydown", function(ev){ if (ev.key === "Enter" || ev.key === " "){ ev.preventDefault(); pickPhoto(i); } });
+      }
+      slotsEl.appendChild(slot);
+    });
+  }
+  renderPhotos();
+
+  /* ---------- read / write form state ---------- */
+  function radioVal(name){ var r = $('input[name="' + name + '"]:checked'); return r ? parseInt(r.value, 10) : 0; }
+  function checkedId(id){ var c = document.getElementById(id); return !!(c && c.checked); }
+  function sv(id){ return STEPS[id]._s.val; }
+
+  function collect(){
+    var emo = [];
+    for (var i = 1; i <= 6; i++) if (checkedId("emotions-" + i)) emo.push(i);
+    var types = {};
+    EX.forEach(function(n){ if (checkedId("ex-" + n)) types[n] = sv("exm-" + n); });
+    var books = {};
+    $$("#booksList .li").forEach(function(l){ if (l._cb.checked) books[l.dataset.name] = { min: l._min._s.val, pages: l._pages._s.val }; });
+    var items = [];
+    $$("#suppsList .li").forEach(function(l){ if (l._cb.checked) items.push(l.dataset.name); });
+    return {
+      date: activeDateStr,
+      mood: radioVal("mood"), emotions: emo, energy: radioVal("energy"), social: radioVal("social"), stress: radioVal("stress"),
+      sleepMin: sv("sleep"),
+      meditation: { on: checkedId("h-medit"), min: sv("medit") },
+      supps: { on: checkedId("h-supps"), items: items },
+      cigs: { on: checkedId("h-cigs"), count: sv("cigs") },
+      coffee: { on: checkedId("h-coffee"), cups: sv("coffee") },
+      work: radioVal("work"),
+      exercise: { on: checkedId("h-ex"), types: types, intensity: radioVal("int") },
+      reading: { on: checkedId("h-read"), books: books },
+      substances: { on: checkedId("h-sub"), type: radioVal("subt") },
+      screenMin: sv("screen"), pickups: parseInt(pickups.value, 10) || 0,
+      dream: { on: checkedId("h-dream"), character: radioVal("dc"), text: dreamText.value },
+      photos: PHOTOS.filter(function(p){ return p && !p.sent; }).map(function(p){ return { data: p.data, name: p.name }; }),
+      memory: memory.value
+    };
+  }
+
+  function snapshot(){
+    var s = { r: {}, c: {}, s: {}, f: {}, books: booksState(), supps: suppsState(), photos: PHOTOS };
+    ["mood","energy","social","stress","work","int","subt","dc"].forEach(function(n){ var v = radioVal(n); if (v) s.r[n] = v; });
+    $$("input[type=checkbox][id]").forEach(function(c){ if (/^(h-|emotions-|ex-)/.test(c.id)) s.c[c.id] = c.checked; });
+    Object.keys(STEPS).forEach(function(id){ s.s[id] = STEPS[id]._s.val; });
+    s.f = { pickups: pickups.value, dreamText: dreamText.value, memory: memory.value };
+    return s;
+  }
+
+  function restore(s){
+    Object.keys(s.r || {}).forEach(function(n){
+      var r = $('input[name="' + n + '"][value="' + s.r[n] + '"]');
+      if (r){ r.checked = true; r._was = true; }
+    });
+    Object.keys(s.c || {}).forEach(function(id){ var c = document.getElementById(id); if (c) c.checked = !!s.c[id]; });
+    Object.keys(s.s || {}).forEach(function(id){ if (STEPS[id]){ STEPS[id]._s.val = s.s[id]; STEPS[id]._show(); } });
+    var f = s.f || {};
+    pickups.value = f.pickups || ""; dreamText.value = f.dreamText || ""; memory.value = f.memory || "";
+    renderBooks(s.books || {}); renderSupps(s.supps || {});
+    PHOTOS = (s.photos && s.photos.length === 3) ? s.photos : [null, null, null];
+    renderPhotos();
+  }
+
+  /* ---------- info panel + summaries ---------- */
+  var iLog = $("#iLog"), iBar = $("#iBar"), iStatus = $("#iStatus");
+  for (var b = 0; b < 10; b++) iBar.appendChild(document.createElement("i"));
+  $("#iDate").textContent = DOW[activeDate.getDay()] + " " + activeDisplay;
+  $("#iMonth").textContent = MON[activeDate.getMonth()] + " " + activeDate.getDate() + "/" + new Date(activeDate.getFullYear(), activeDate.getMonth() + 1, 0).getDate();
+
+  function loggedCount(d){
+    var n = 0;
+    [d.mood, d.energy, d.social, d.stress, d.work].forEach(function(v){ if (v) n++; });
+    if (d.emotions.length) n++;
+    if (d.sleepMin) n++;
+    if (d.screenMin) n++;
+    if (d.pickups) n++;
+    if (PHOTOS.some(function(p){ return !!p; })) n++;
+    if (d.memory.trim()) n++;
+    [d.meditation, d.supps, d.cigs, d.coffee, d.exercise, d.reading, d.substances, d.dream].forEach(function(h){ if (h.on) n++; });
+    return n;
+  }
+  var TOTAL = 19, dirty = false;
+  function refresh(){
+    HABITS.forEach(function(h){ h.hs.textContent = h.cb.checked ? h.sum() : "—"; });
+    var n = loggedCount(collect());
+    iLog.textContent = n + "/" + TOTAL;
+    var on = Math.round(n / TOTAL * 10);
+    $$("i", iBar).forEach(function(i, k){ i.classList.toggle("on", k < on); });
+    var savedAt = lsGet(SAVED_KEY);
+    iStatus.textContent = dirty ? "UNSAVED" : (savedAt ? "SAVED " + savedAt : (n ? "UNSAVED" : "NEW ENTRY"));
+  }
+
+  var timer = null;
+  function changed(){
+    if (restoring) return;
+    dirty = true;
+    clearTimeout(timer);
+    timer = setTimeout(function(){ lsSet(KEY, JSON.stringify(snapshot())); }, 150);
+    refresh();
+  }
+  document.addEventListener("change", changed);
+  document.addEventListener("input", changed);
+
+  // restore saved state for this date
+  (function(){
+    var raw = lsGet(KEY);
+    if (raw){ try { restore(JSON.parse(raw)); } catch(e){} }
+  })();
+  restoring = false;
+  refresh();
+
+  /* ---------- date + calendar ---------- */
+  var dateDisplay = $("#dateDisplay"), calPopup = $("#calPopup"), calTitle = $("#calTitle"), calGrid = $("#calGrid");
+  dateDisplay.textContent = activeDisplay;
+  if (activeDateStr === realTodayStr){ var flag = el("span", "today-flag", "(TODAY)"); dateDisplay.appendChild(flag); }
+  var calView = new Date(activeDateStr + "T00:00:00");
+  var DOWC = ["MO","TU","WE","TH","FR","SA","SU"];
+  function renderCal(){
+    var y = calView.getFullYear(), m = calView.getMonth();
+    calTitle.textContent = MON[m] + " " + y;
+    calGrid.innerHTML = "";
+    DOWC.forEach(function(dn){ calGrid.appendChild(el("div", "cal-dow", dn)); });
+    var offset = (new Date(y, m, 1).getDay() + 6) % 7, dim = new Date(y, m + 1, 0).getDate();
+    for (var i = 0; i < offset; i++) calGrid.appendChild(el("span", "cal-day other-month"));
+    for (var d = 1; d <= dim; d++){
+      var iso = y + "-" + pad(m + 1) + "-" + pad(d);
+      var btn = el("button", "cal-day", String(d)); btn.type = "button"; btn.setAttribute("data-iso", iso);
       if (iso === realTodayStr) btn.classList.add("today");
       if (iso === activeDateStr) btn.classList.add("selected");
       if (iso > realTodayStr) btn.classList.add("disabled");
       calGrid.appendChild(btn);
     }
   }
-
-  function openCal(){
-    calViewDate = new Date(activeDateStr + "T00:00:00");
-    renderCalendar();
-    calPopup.classList.add("open");
-  }
+  function openCal(){ calView = new Date(activeDateStr + "T00:00:00"); renderCal(); calPopup.classList.add("open"); }
   function closeCal(){ calPopup.classList.remove("open"); }
-
-  dateDisplay.addEventListener("click", function(){
-    if (calPopup.classList.contains("open")) { closeCal(); } else { openCal(); }
-  });
-  dateDisplay.addEventListener("keydown", function(ev){
-    if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); openCal(); }
-  });
-  calPrev.addEventListener("click", function(){ calViewDate.setMonth(calViewDate.getMonth() - 1); renderCalendar(); });
-  calNext.addEventListener("click", function(){ calViewDate.setMonth(calViewDate.getMonth() + 1); renderCalendar(); });
-  calGrid.addEventListener("click", function(e){
-    var btn = e.target.closest(".cal-day");
+  dateDisplay.addEventListener("click", function(){ if (calPopup.classList.contains("open")) closeCal(); else openCal(); });
+  dateDisplay.addEventListener("keydown", function(ev){ if (ev.key === "Enter" || ev.key === " "){ ev.preventDefault(); openCal(); } });
+  $("#calPrev").addEventListener("click", function(){ calView.setDate(1); calView.setMonth(calView.getMonth() - 1); renderCal(); });
+  $("#calNext").addEventListener("click", function(){ calView.setDate(1); calView.setMonth(calView.getMonth() + 1); renderCal(); });
+  calGrid.addEventListener("click", function(ev){
+    var btn = ev.target.closest(".cal-day");
     if (!btn || btn.classList.contains("disabled") || btn.classList.contains("other-month")) return;
     var iso = btn.getAttribute("data-iso");
     var params = new URLSearchParams(location.search);
-    if (iso === realTodayStr) { params.delete("date"); } else { params.set("date", iso); }
+    if (iso === realTodayStr) params.delete("date"); else params.set("date", iso);
     var qs = params.toString();
     location.href = location.pathname + (qs ? "?" + qs : "");
   });
   document.addEventListener("click", function(ev){
-    if (calPopup.classList.contains("open") && !calPopup.contains(ev.target) && ev.target !== dateDisplay && !dateDisplay.contains(ev.target)) {
-      closeCal();
-    }
+    if (!calPopup.contains(ev.target) && ev.target !== dateDisplay && !dateDisplay.contains(ev.target)) closeCal();
   });
 
-  function makeRow(name, desc){
-    var row = document.createElement("div");
-    row.className = "row";
-    var head = document.createElement("div");
-    head.className = "row-head";
-    head.innerHTML = "<div class='row-title'>"+(name?"<div class='name'>"+name+"</div>":"")+(desc?"<div class='desc'>"+desc+"</div>":"")+"</div>";
-    row.appendChild(head);
-    row._head = head;
-    return row;
-  }
-
-  function addOptions(row, options, multi, opts){
-    opts = opts || {};
-    var wrap = document.createElement("div");
-    wrap.className = "row-options" + (opts.nowrap ? " nowrap" : "");
-    row.appendChild(wrap);
-
-    function makeOpt(label, onToggle, initialPressed){
-      var opt = document.createElement("button");
-      opt.type = "button";
-      opt.className = "opt";
-      opt.setAttribute("aria-pressed", initialPressed ? "true" : "false");
-      opt.innerHTML = "<span class='box'></span><span class='lbl'>"+label+"</span>";
-      opt.addEventListener("click", function(){
-        if (multi){
-          var now = opt.getAttribute("aria-pressed") === "true";
-          opt.setAttribute("aria-pressed", now ? "false" : "true");
-        } else {
-          wrap.querySelectorAll(".opt").forEach(function(o){ o.setAttribute("aria-pressed","false"); });
-          opt.setAttribute("aria-pressed","true");
-        }
-        if (onToggle) onToggle(opt.getAttribute("aria-pressed") === "true", label);
-      });
-      return opt;
-    }
-
-    options.forEach(function(label){
-      var initialPressed = opts.isPressed ? opts.isPressed(label) : false;
-      wrap.appendChild(makeOpt(label, opts.onToggle, initialPressed));
-    });
-
-    if (opts.addable){
-      var addBtn = document.createElement("button");
-      addBtn.type = "button";
-      addBtn.className = "opt add";
-      addBtn.innerHTML = "<span class='box'></span><span class='lbl'>+ Add</span>";
-      addBtn.addEventListener("click", function(){
-        var input = document.createElement("input");
-        input.className = "add-input";
-        input.placeholder = "Name…";
-        wrap.replaceChild(input, addBtn);
-        input.focus();
-        var done = false;
-        function commit(){
-          if (done) return;
-          done = true;
-          var val = input.value.trim();
-          if (val){
-            var newOpt = makeOpt(val, opts.onToggle);
-            newOpt.setAttribute("aria-pressed","true");
-            wrap.insertBefore(newOpt, input);
-            if (opts.onToggle) opts.onToggle(true, val);
-          }
-          wrap.replaceChild(addBtn, input);
-        }
-        input.addEventListener("keydown", function(e){
-          if (e.key === "Enter") { e.preventDefault(); commit(); }
-          if (e.key === "Escape") { done = true; wrap.replaceChild(addBtn, input); }
-        });
-        input.addEventListener("blur", commit);
-      });
-      wrap.appendChild(addBtn);
-    }
-    return wrap;
-  }
-
-  function addStepper(container, unit, small, onChange, initial, step){
-    step = step || 1;
-    var stepper = document.createElement("div");
-    stepper.className = "stepper" + (small ? " small" : "");
-    var value = initial || 0;
-    var minus = document.createElement("button");
-    minus.type = "button"; minus.textContent = "−";
-    var plus = document.createElement("button");
-    plus.type = "button"; plus.textContent = "+";
-    var val = document.createElement("span");
-    val.className = "value";
-    val.tabIndex = 0;
-
-    function fmt(v){
-      var r = Math.round(v * 1000) / 1000;
-      return String(r);
-    }
-    function clamp(v){
-      if (isNaN(v)) return value;
-      v = Math.max(0, v);
-      return Math.round(v * 1000) / 1000;
-    }
-    function render(){ val.innerHTML = fmt(value) + " <span class='unit'>"+unit+"</span>"; }
-
-    function openEdit(){
-      var input = document.createElement("input");
-      input.type = "text";
-      input.inputMode = "decimal";
-      input.className = "value-input";
-      input.value = fmt(value);
-      stepper.replaceChild(input, val);
-      input.focus();
-      input.select();
-      var done = false;
-      function commit(){
-        if (done) return;
-        done = true;
-        var raw = input.value.replace(",", ".").trim();
-        var num = parseFloat(raw);
-        if (!isNaN(num) && /^\d+(\.\d+)?$/.test(raw)) { value = clamp(num); }
-        render();
-        stepper.replaceChild(val, input);
-        if (onChange) onChange(value);
-      }
-      input.addEventListener("keydown", function(e){
-        if (e.key === "Enter") { e.preventDefault(); commit(); }
-        if (e.key === "Escape") { done = true; stepper.replaceChild(val, input); }
-      });
-      input.addEventListener("blur", commit);
-    }
-    val.addEventListener("click", openEdit);
-    val.addEventListener("keydown", function(e){
-      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openEdit(); }
-    });
-    minus.addEventListener("click", function(){ value = clamp(value - step); render(); if(onChange) onChange(value); });
-    plus.addEventListener("click", function(){ value = clamp(value + step); render(); if(onChange) onChange(value); });
-    render();
-    stepper.appendChild(minus); stepper.appendChild(val); stepper.appendChild(plus);
-    container.appendChild(stepper);
-    return stepper;
-  }
-
-  function addTextarea(row, placeholder, onInput, initial){
-    var wrap = document.createElement("div");
-    wrap.className = "row-text";
-    var ta = document.createElement("textarea");
-    ta.placeholder = placeholder;
-    if (initial) ta.value = initial;
-    if (onInput) ta.addEventListener("input", function(){ onInput(ta.value); });
-    wrap.appendChild(ta);
-    row.appendChild(wrap);
-    return ta;
-  }
-
-  function addBracketList(row, items, addable, opts){
-    opts = opts || {};
-    var editing = false;
-    var wrap = document.createElement("div");
-    wrap.className = "bracket-list";
-    row.appendChild(wrap);
-
-    function makeItem(label, checked){
-      var item = document.createElement("button");
-      item.type = "button";
-      item.className = "bracket-item";
-      item.setAttribute("aria-pressed", checked ? "true" : "false");
-      function render(){
-        var pressed = item.getAttribute("aria-pressed") === "true";
-        if (editing){
-          item.innerHTML = "<span class='brk'>[×]</span> " + label;
-        } else {
-          item.innerHTML = "<span class='brk'>["+(pressed?"X":" ")+"]</span> "+label;
-        }
-      }
-      render();
-      item._render = render;
-      item.addEventListener("click", function(){
-        if (editing){
-          wrap.removeChild(item);
-          if (opts.onRemove) opts.onRemove(label);
-          return;
-        }
-        var now = item.getAttribute("aria-pressed") === "true";
-        item.setAttribute("aria-pressed", now ? "false" : "true");
-        render();
-        if (opts.onToggle) opts.onToggle(!now, label);
-      });
-      return item;
-    }
-
-    items.forEach(function(label){
-      var initialPressed = opts.isPressed ? opts.isPressed(label) : false;
-      wrap.appendChild(makeItem(label, initialPressed));
-    });
-
-    if (addable){
-      var addBtn = document.createElement("button");
-      addBtn.type = "button";
-      addBtn.className = "bracket-add";
-      addBtn.innerHTML = "<span class='brk'>[</span> + ADD ITEM <span class='brk'>]</span>";
-      addBtn.addEventListener("click", function(){
-        var input = document.createElement("input");
-        input.className = "bracket-add-input";
-        input.placeholder = "Name…";
-        wrap.replaceChild(input, addBtn);
-        input.focus();
-        var done = false;
-        function commit(){
-          if (done) return;
-          done = true;
-          var val = input.value.trim();
-          if (val){
-            wrap.insertBefore(makeItem(val, true), input);
-            if (opts.onToggle) opts.onToggle(true, val);
-          }
-          wrap.replaceChild(addBtn, input);
-        }
-        input.addEventListener("keydown", function(e){
-          if (e.key === "Enter") { e.preventDefault(); commit(); }
-          if (e.key === "Escape") { done = true; wrap.replaceChild(addBtn, input); }
-        });
-        input.addEventListener("blur", commit);
-      });
-      wrap.appendChild(addBtn);
-    }
-
-    if (opts.editable){
-      var editBtn = document.createElement("button");
-      editBtn.type = "button";
-      editBtn.className = "list-edit-btn";
-      editBtn.textContent = "[ EDIT LIST ]";
-      editBtn.addEventListener("click", function(){
-        editing = !editing;
-        editBtn.textContent = editing ? "[ DONE ]" : "[ EDIT LIST ]";
-        editBtn.classList.toggle("active", editing);
-        wrap.classList.toggle("edit-mode", editing);
-        wrap.querySelectorAll(".bracket-item").forEach(function(el){ if (el._render) el._render(); });
-      });
-      row.appendChild(editBtn);
-    }
-    return wrap;
-  }
-
-  function buildLoadingScale(container, segments){
-    for (var i = 0; i < segments; i++){
-      var t = document.createElement("span");
-      t.className = "scale-tick";
-      container.appendChild(t);
-    }
-    var runner = document.createElement("span");
-    runner.className = "scale-runner";
-    container.appendChild(runner);
-  }
-
-  function addPhoto(row, onPicked, initialName, initialData){
-    var label = document.createElement("div");
-    label.className = "desc";
-    label.style.marginTop = "14px";
-    label.innerHTML = "&gt; ATTACH IMAGE TO TODAY'S ARCHIVE";
-    row.appendChild(label);
-    var wrap = document.createElement("div");
-    wrap.className = "photo-row";
-    var btn = document.createElement("button");
-    btn.type = "button"; btn.className = "photo-btn"; btn.textContent = "+ ATTACH MEMORY";
-    var input = document.createElement("input");
-    input.type = "file"; input.accept = "image/*"; input.style.display = "none";
-    var name = document.createElement("span");
-    name.className = "photo-name";
-    if (initialName) name.textContent = initialName;
-    var previewWrap = document.createElement("div");
-    previewWrap.className = "photo-preview-wrap";
-    var img = document.createElement("img");
-    img.className = "photo-preview";
-    previewWrap.appendChild(img);
-    if (initialData) { img.src = initialData; previewWrap.classList.add("show"); }
-    btn.addEventListener("click", function(){ input.click(); });
-    input.addEventListener("change", function(){
-      var file = input.files[0];
-      if (!file) return;
-      name.textContent = "Reading… " + file.name;
-      var reader = new FileReader();
-      reader.onload = function(){
-        name.textContent = file.name;
-        img.src = reader.result;
-        previewWrap.classList.add("show");
-        if (onPicked) onPicked(reader.result, file.name);
-      };
-      reader.readAsDataURL(file);
-    });
-    wrap.appendChild(btn); wrap.appendChild(input); wrap.appendChild(name);
-    row.appendChild(wrap);
-    row.appendChild(previewWrap);
-  }
-
-  // ================= SIMPLE FIELDS =================
-  var blockSimple = document.getElementById("blockSimple");
-
-  var r1 = makeRow("Mood Status", "&gt; READING OVERALL DAY STATE...");
-  addOptions(r1, ["Rough","Meh","Okay","Good","Great","Amazing"], false, {nowrap:true,
-    isPressed:function(l){ return state.mood === l; },
-    onToggle:function(pressed,label){ if(pressed){ state.mood = label; persist(); } }
+  /* ---------- settings ---------- */
+  var urlInput = $("#webAppUrl"), saveStatus = $("#saveStatus");
+  urlInput.value = lsGet(URL_KEY) || "";
+  if (!urlInput.value) $("#winSettings").open = true;
+  function setStatus(text, isErr){ saveStatus.textContent = text; saveStatus.classList.toggle("err", !!isErr); }
+  $("#saveUrlBtn").addEventListener("click", function(){
+    lsSet(URL_KEY, urlInput.value.trim());
+    $("#winSettings").open = false;
+    setStatus("URL saved.", false);
   });
-  blockSimple.appendChild(r1);
 
-  var r2 = makeRow("Emotional Signals", "&gt; SELECT DETECTED EMOTIONS");
-  addOptions(r2, ["Joy","Calm","Sadness","Anxiety","Anger","Apathy"], true, {nowrap:true,
-    isPressed:function(l){ return state.emotions.indexOf(l) !== -1; },
-    onToggle:function(pressed,label){
-      var i = state.emotions.indexOf(label);
-      if (pressed && i === -1) state.emotions.push(label);
-      if (!pressed && i !== -1) state.emotions.splice(i,1);
-      persist();
-    }
-  });
-  blockSimple.appendChild(r2);
-
-  var r3 = makeRow("System Recovery", "&gt; RECOVERY TIME: " + state.sleepHours + " HRS");
-  var r3Desc = r3._head.querySelector(".desc");
-  var r3QualityLine = document.createElement("div");
-  r3QualityLine.className = "desc";
-  r3QualityLine.innerHTML = "&gt; RECOVERY QUALITY: " + (state.sleepQuality ? state.sleepQuality.toUpperCase() : "—");
-  r3._head.querySelector(".row-title").appendChild(r3QualityLine);
-  addStepper(r3._head, "hrs", false, function(v){ state.sleepHours = v; persist(); r3Desc.innerHTML = "&gt; RECOVERY TIME: " + v + " HRS"; }, state.sleepHours, 0.5);
-  addOptions(r3, ["Bad","Meh","Okay","Good","Excellent"], false, {nowrap:true,
-    isPressed:function(l){ return state.sleepQuality === l; },
-    onToggle:function(pressed,label){
-      if (pressed){ state.sleepQuality = label; persist(); r3QualityLine.innerHTML = "&gt; RECOVERY QUALITY: " + label.toUpperCase(); }
-    }
-  });
-  blockSimple.appendChild(r3);
-
-  var r4 = makeRow("Environment Status", "&gt; SCANNING CURRENT SURROUNDINGS...");
-  addOptions(r4, ["Chaos","Casual","Clean"], false, {nowrap:true,
-    isPressed:function(l){ return state.space === l; },
-    onToggle:function(pressed,label){ if(pressed){ state.space = label; persist(); } }
-  });
-  blockSimple.appendChild(r4);
-
-  var r5 = makeRow("Screen Activity", "&gt; READING DEVICE USAGE...");
-  addStepper(r5._head, "hrs", false, function(v){ state.screenHours = v; persist(); }, state.screenHours, 0.25);
-  blockSimple.appendChild(r5);
-
-  var r6 = makeRow("Caffeine Input", "&gt; TRACKING DAILY INTAKE");
-  addStepper(r6._head, "cups", false, function(v){ state.coffee = v; persist(); }, state.coffee);
-  blockSimple.appendChild(r6);
-
-  var r7 = makeRow("Nicotine Input", "&gt; TRACKING DAILY INTAKE");
-  addStepper(r7._head, "pcs", false, function(v){ state.cigarettes = v; persist(); }, state.cigarettes);
-  blockSimple.appendChild(r7);
-
-  var r8 = makeRow("Dream Archive", "&gt; SEARCHING LAST SLEEP SESSION...");
-  addOptions(r8, ["Don't remember","Pleasant","Nightmare","Neutral"], false, {nowrap:true,
-    isPressed:function(l){ return state.dreamPick === l; },
-    onToggle:function(pressed,label){ if(pressed){ state.dreamPick = label; persist(); } }
-  });
-  addTextarea(r8, "Describe the dream, if you'd like (optional)", function(val){ state.dreamText = val; persist(); }, state.dreamText);
-  blockSimple.appendChild(r8);
-
-  // ================= WORK =================
-  var blockWork = document.getElementById("blockWork");
-  var rWork = makeRow("");
-  addStepper(rWork._head, "hrs", false, function(v){ state.workHours = v; persist(); }, state.workHours);
-  addOptions(rWork, ["Bad","Meh","Okay","Good","Great"], false, {nowrap:true,
-    isPressed:function(l){ return state.workSatisfaction === l; },
-    onToggle:function(pressed,label){ if(pressed){ state.workSatisfaction = label; persist(); } }
-  });
-  blockWork.appendChild(rWork);
-
-  // ================= READING =================
-  var blockReading = document.getElementById("blockReading");
-  var rReading = makeRow("", "&gt; CURRENTLY READING:");
-  var readingSubs = document.createElement("div");
-  readingSubs.className = "sub-steppers";
-  var readingSubMap = {};
-  function ensureReadingSubStepper(label){
-    if (readingSubMap[label]) return;
-    var subRow = document.createElement("div");
-    subRow.className = "sub-stepper-row";
-    var sname = document.createElement("span");
-    sname.className = "sname"; sname.textContent = label;
-    subRow.appendChild(sname);
-    addStepper(subRow, "min", true, function(v){
-      state.readingMinutes[label] = v; persist();
-    }, state.readingMinutes[label] || 0, 15);
-    readingSubs.appendChild(subRow);
-    readingSubMap[label] = subRow;
-  }
-  addBracketList(rReading, customLists.books.slice(), true, {
-    editable: true,
-    isPressed:function(l){ return state.readingBooks.indexOf(l) !== -1; },
-    onToggle:function(pressed,label){
-      addToCustomList("books", label);
-      var i = state.readingBooks.indexOf(label);
-      if (pressed){
-        if (i === -1) state.readingBooks.push(label);
-        if (!state.readingMinutes.hasOwnProperty(label)) state.readingMinutes[label] = 0;
-        ensureReadingSubStepper(label);
-      } else {
-        if (i !== -1) state.readingBooks.splice(i,1);
-        if (readingSubMap[label]){
-          readingSubs.removeChild(readingSubMap[label]);
-          delete readingSubMap[label];
-        }
-        delete state.readingMinutes[label];
-      }
-      persist();
-    },
-    onRemove:function(label){
-      removeFromCustomList("books", label);
-      var i = state.readingBooks.indexOf(label);
-      if (i !== -1) state.readingBooks.splice(i,1);
-      if (readingSubMap[label]){
-        readingSubs.removeChild(readingSubMap[label]);
-        delete readingSubMap[label];
-      }
-      delete state.readingMinutes[label];
-      persist();
-    }
-  });
-  Object.keys(state.readingMinutes).forEach(ensureReadingSubStepper);
-  rReading.appendChild(readingSubs);
-  blockReading.appendChild(rReading);
-
-  // ================= EXERCISE =================
-  var blockExercise = document.getElementById("blockExercise");
-  var rExercise = makeRow("");
-  var exerciseSubs = document.createElement("div");
-  exerciseSubs.className = "sub-steppers";
-  var exerciseSubMap = {};
-  function ensureSubStepper(label){
-    if (exerciseSubMap[label]) return;
-    var subRow = document.createElement("div");
-    subRow.className = "sub-stepper-row";
-    var sname = document.createElement("span");
-    sname.className = "sname"; sname.textContent = label;
-    subRow.appendChild(sname);
-    addStepper(subRow, "min", true, function(v){ state.exerciseMinutes[label] = v; persist(); }, state.exerciseMinutes[label] || 0, 15);
-    exerciseSubs.appendChild(subRow);
-    exerciseSubMap[label] = subRow;
-  }
-  var exerciseOptions = ["Stretching","Rollerblading","Strength"];
-  customLists.exercise.forEach(function(x){ if (exerciseOptions.indexOf(x) === -1) exerciseOptions.push(x); });
-  addOptions(rExercise, exerciseOptions, true, {
-    addable:true,
-    isPressed:function(l){ return state.exerciseMinutes.hasOwnProperty(l); },
-    onToggle:function(pressed, label){
-      addToCustomList("exercise", label);
-      if (pressed){
-        if (!state.exerciseMinutes.hasOwnProperty(label)) state.exerciseMinutes[label] = 0;
-        ensureSubStepper(label);
-        persist();
-      } else if (exerciseSubMap[label]){
-        exerciseSubs.removeChild(exerciseSubMap[label]);
-        delete exerciseSubMap[label];
-        delete state.exerciseMinutes[label];
-        persist();
-      }
-    }
-  });
-  Object.keys(state.exerciseMinutes).forEach(ensureSubStepper);
-  rExercise.appendChild(exerciseSubs);
-  blockExercise.appendChild(rExercise);
-
-  // ================= MEDICATIONS =================
-  var blockMeds = document.getElementById("blockMeds");
-  var rMeds = makeRow("", "&gt; REGISTERED TODAY:");
-  var medsScale = document.createElement("div");
-  medsScale.className = "scale-row lg";
-  buildLoadingScale(medsScale, 20);
-  addBracketList(rMeds, customLists.meds.slice(), true, {
-    editable: true,
-    isPressed:function(l){ return state.meds.indexOf(l) !== -1; },
-    onToggle:function(pressed,label){
-      addToCustomList("meds", label);
-      var i = state.meds.indexOf(label);
-      if (pressed && i === -1) state.meds.push(label);
-      if (!pressed && i !== -1) state.meds.splice(i,1);
-      persist();
-    },
-    onRemove:function(label){
-      removeFromCustomList("meds", label);
-      var i = state.meds.indexOf(label);
-      if (i !== -1) { state.meds.splice(i,1); persist(); }
-    }
-  });
-  rMeds.appendChild(medsScale);
-  blockMeds.appendChild(rMeds);
-
-  // ================= END OF DAY =================
-  var blockEnd = document.getElementById("blockEnd");
-  var rEnd = makeRow("Memory to Keep", "&gt; WRITE DATA WORTH PRESERVING");
-  addTextarea(rEnd, "What do you want to remember about today?", function(val){ state.wisdomText = val; persist(); }, state.wisdomText);
-  addPhoto(rEnd, function(dataUrl, fileName){
-    state.photoData = dataUrl; state.photoName = fileName; persist();
-  }, state.photoName, state.photoData);
-  blockEnd.appendChild(rEnd);
-
-  // ---------- Save to Google Sheet ----------
-  var saveStatus = document.getElementById("saveStatus");
-  function setStatus(text, isErr){
-    saveStatus.textContent = text;
-    saveStatus.classList.toggle("err", !!isErr);
-  }
-  document.getElementById("saveBtn").addEventListener("click", function(){
-    var webAppUrl = "";
-    try { webAppUrl = localStorage.getItem(URL_KEY) || ""; } catch(e) {}
-    if (!webAppUrl) {
-      settingsPanel.classList.add("open");
-      setStatus("Add your Web App URL in settings first.", true);
+  /* ---------- save to Google Sheet ---------- */
+  $("#saveBtn").addEventListener("click", function(){
+    var webAppUrl = lsGet(URL_KEY) || "";
+    if (!webAppUrl){
+      $("#winSettings").open = true;
+      setStatus("Add your web app URL in settings first.", true);
       return;
     }
-
-    function doActualSave(){
-      setStatus("Saving…", false);
-      fetch(webAppUrl, {
-        method: "POST",
-        mode: "no-cors",
-        body: JSON.stringify(state)
-      }).then(function(){
-        var now = new Date();
-        var forStr = activeDateStr === realTodayStr ? "" : " for " + activeDateDisplay;
-        setStatus("Saved" + forStr + " at " + now.toLocaleTimeString("en-US", {hour:"2-digit", minute:"2-digit"}) + ".", false);
+    var payload = collect();
+    function send(){
+      setStatus("Saving...", false);
+      fetch(webAppUrl, { method: "POST", mode: "no-cors", body: JSON.stringify(payload) }).then(function(){
+        PHOTOS.forEach(function(p){ if (p) p.sent = true; });
+        var t = new Date();
+        var hhmm = pad(t.getHours()) + ":" + pad(t.getMinutes());
+        lsSet(SAVED_KEY, hhmm); lsSet(KEY, JSON.stringify(snapshot()));
+        dirty = false; refresh();
+        setStatus("Saved" + (activeDateStr === realTodayStr ? "" : " for " + activeDisplay) + " at " + hhmm + ".", false);
       }).catch(function(){
-        setStatus("Couldn't send. This preview sandbox can't reach Google — host the page (e.g. GitHub Pages) to save for real.", true);
+        setStatus("Could not send. Check your connection and the web app URL.", true);
       });
     }
-
-    setStatus("Checking existing data…", false);
-    var checkUrl = webAppUrl + (webAppUrl.indexOf("?") === -1 ? "?" : "&") + "date=" + encodeURIComponent(state.date);
+    setStatus("Checking existing data...", false);
+    var checkUrl = webAppUrl + (webAppUrl.indexOf("?") === -1 ? "?" : "&") + "date=" + encodeURIComponent(activeDateStr);
     fetch(checkUrl).then(function(r){ return r.json(); }).then(function(res){
       if (res && res.exists){
-        if (window.confirm("There's already a saved entry for " + activeDateDisplay + ". Overwrite it?")){
-          doActualSave();
-        } else {
-          setStatus("Cancelled.", false);
-        }
-      } else {
-        doActualSave();
-      }
-    }).catch(function(){
-      doActualSave();
-    });
+        if (window.confirm("There is already a saved entry for " + activeDisplay + ". Overwrite it?")) send();
+        else setStatus("Cancelled.", false);
+      } else send();
+    }).catch(function(){ send(); });
   });
 
 })();
 </script>
+</body>
+</html>
